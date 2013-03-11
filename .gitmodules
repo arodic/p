@@ -1,0 +1,18 @@
+[submodule "chrysaora"]
+	path = chrysaora
+	url = https://github.com/arodic/Chrysaora.git
+[submodule "hackathon"]
+	path = hackathon
+	url = https://github.com/arodic/hackathon.git
+[submodule "jellyfish"]
+	path = jellyfish
+	url = https://github.com/arodic/jellyfish.git
+[submodule "snow"]
+	path = snow
+	url = https://github.com/arodic/snow.git
+[submodule "nyc"]
+	path = nyc
+	url = https://github.com/arodic/nyc
+[submodule "mass"]
+	path = mass
+	url = https://github.com/arodic/mass64k.git
