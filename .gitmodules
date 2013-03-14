@@ -16,3 +16,6 @@
 [submodule "mass"]
 	path = mass
 	url = https://github.com/arodic/mass64k.git
+[submodule "three"]
+	path = three
+	url = https://github.com/arodic/three.js.git
