@@ -68,11 +68,6 @@
         container = document.createElement( 'div' );
         document.body.appendChild( container );
 
-        renderer = new THREE.WebGLRenderer( { antialias: true } );
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        renderer.domElement.style.position = 'fixed';
-        container.appendChild( renderer.domElement );
-
         cssRenderer = new THREE.CSS3DRenderer();
         cssRenderer.setSize( window.innerWidth, window.innerHeight );
         cssRenderer.domElement.style.position = 'fixed';
@@ -82,9 +77,6 @@
         camera.position.z = 1;
 
         scene = new THREE.Scene();
-
-        var grid = new THREE.Mesh( new THREE.PlaneGeometry( 10, 10, 100, 100 ), new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true, transparent: true, opacity: 0.2} ) );
-        scene.add( grid );
 
         // CSS3D Objects
 
@@ -137,7 +129,6 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
 
-        renderer.setSize( window.innerWidth, window.innerHeight );
         cssRenderer.setSize( window.innerWidth, window.innerHeight );
 
       }
@@ -160,7 +151,6 @@
         // page1.object.position.z = Math.sin( timer * 10 ) * 1;
         camera.lookAt(scene.position);
 
-        renderer.render( scene, camera );
         cssRenderer.render( scene, camera );
 
 
