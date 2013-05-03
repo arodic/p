@@ -39,6 +39,7 @@ Menubar.Add = function ( signals ) {
 		mesh.rotation.x = - Math.PI/2;
 
 		signals.objectAdded.dispatch( mesh );
+		signals.objectSelected.dispatch( mesh );
 
 	} );
 	options.add( option );
@@ -63,6 +64,7 @@ Menubar.Add = function ( signals ) {
 		mesh.name = 'Cube ' + mesh.id;
 
 		signals.objectAdded.dispatch( mesh );
+		signals.objectSelected.dispatch( mesh );
 
 
 	} );
@@ -87,6 +89,7 @@ Menubar.Add = function ( signals ) {
 		mesh.name = 'Cylinder ' + mesh.id;
 
 		signals.objectAdded.dispatch( mesh );
+		signals.objectSelected.dispatch( mesh );
 
 	} );
 	options.add( option );
@@ -107,6 +110,7 @@ Menubar.Add = function ( signals ) {
 		mesh.name = 'Sphere ' + mesh.id;
 
 		signals.objectAdded.dispatch( mesh );
+		signals.objectSelected.dispatch( mesh );
 
 	} );
 	options.add( option );
@@ -126,6 +130,7 @@ Menubar.Add = function ( signals ) {
 		mesh.name = 'Icosahedron ' + mesh.id;
 
 		signals.objectAdded.dispatch( mesh );
+		signals.objectSelected.dispatch( mesh );
 
 	} );
 	options.add( option );
@@ -148,6 +153,7 @@ Menubar.Add = function ( signals ) {
 		mesh.name = 'Torus ' + mesh.id;
 
 		signals.objectAdded.dispatch( mesh );
+		signals.objectSelected.dispatch( mesh );
 
 	} );
 	options.add( option );
@@ -172,6 +178,7 @@ Menubar.Add = function ( signals ) {
 		mesh.name = 'TorusKnot ' + mesh.id;
 
 		signals.objectAdded.dispatch( mesh );
+		signals.objectSelected.dispatch( mesh );
 
 	} );
 	options.add( option );
@@ -195,6 +202,7 @@ Menubar.Add = function ( signals ) {
 		light.name = 'PointLight ' + light.id;
 
 		signals.objectAdded.dispatch( light );
+		signals.objectSelected.dispatch( light );
 
 	} );
 	options.add( option );
@@ -219,6 +227,7 @@ Menubar.Add = function ( signals ) {
 		light.position.set( 0, 1, 0 ).multiplyScalar( 200 );
 
 		signals.objectAdded.dispatch( light );
+		signals.objectSelected.dispatch( light );
 
 	} );
 	options.add( option );
@@ -240,6 +249,7 @@ Menubar.Add = function ( signals ) {
 		light.position.set( 1, 1, 1 ).multiplyScalar( 200 );
 
 		signals.objectAdded.dispatch( light );
+		signals.objectSelected.dispatch( light );
 
 	} );
 	options.add( option );
@@ -261,6 +271,7 @@ Menubar.Add = function ( signals ) {
 		light.position.set( 1, 1, 1 ).multiplyScalar( 200 );
 
 		signals.objectAdded.dispatch( light );
+		signals.objectSelected.dispatch( light );
 
 	} );
 	options.add( option );
@@ -278,6 +289,7 @@ Menubar.Add = function ( signals ) {
 		light.name = 'AmbientLight ' + light.id;
 
 		signals.objectAdded.dispatch( light );
+		signals.objectSelected.dispatch( light );
 
 	} );
 	options.add( option );

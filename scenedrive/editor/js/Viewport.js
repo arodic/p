@@ -296,7 +296,7 @@ var Viewport = function ( signals ) {
 		updateInfo();
 
 		signals.sceneChanged.dispatch( scene );
-		signals.objectSelected.dispatch( object );
+		// signals.objectSelected.dispatch( object );
 
 	} );
 
@@ -479,6 +479,12 @@ var Viewport = function ( signals ) {
 		oldFogDensity = density;
 
 		updateFog( scene );
+
+		render();
+
+	} );
+
+	signals.sceneChanged.add( function ( scene ) {
 
 		render();
 

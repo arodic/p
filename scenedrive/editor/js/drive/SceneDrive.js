@@ -32,19 +32,20 @@ sceneDrive.setUuids = function( scene ) {
       if ( object.material.uuid == undefined || object.material.uuid == '' ) object.material.uuid = guid();
   } );
 
-}
+};
 
 sceneDrive.listToModel = function( list, model ) {
 
-  if ( list ) {
+  if ( list && model ) {
     for ( var i in list ) {
-      model.set( list[ i ].uuid, JSON.stringify( list[ i ] ) );
+      if ( list[ i ].uuid )
+        model.set( list[ i ].uuid, JSON.stringify( list[ i ] ) );
     }
   }
 
   return model;
 
-}
+};
 
 sceneDrive.modelToList = function( model ) {
 
@@ -57,7 +58,7 @@ sceneDrive.modelToList = function( model ) {
 
   return list;
 
-}
+};
 
 sceneDrive.remapToUUids = function( objects, targets, key ) {
 
@@ -98,8 +99,7 @@ sceneDrive.flattenObjects = function( list ) {
 
   return iterateChildren( list );
 
-}
-
+};
 
 sceneDrive.initializeModel = function( model ) {
 
@@ -108,20 +108,17 @@ sceneDrive.initializeModel = function( model ) {
   model.getRoot().set( 'objects', model.createMap() );
 
   sceneDrive.getModels( model.getRoot() );
-  sceneDrive.getLocalStorage();
+  sceneDrive.saveJSON( JSON.parse( localStorage.threejsEditor ) );
 
 };
 
-sceneDrive.getLocalStorage = function() {
+sceneDrive.saveJSON = function( json ) {
 
-  var json = JSON.parse( localStorage.threejsEditor );
-  sceneDrive.setModels( json );
-
-}
-
-sceneDrive.setModels = function( json ) {
-
-  json.object = sceneDrive.flattenObjects( json.object.children );
+  if ( json.object.type == 'Scene' ) {
+    json.object = sceneDrive.flattenObjects( json.object.children );
+  } else {
+    json.object = sceneDrive.flattenObjects( json.object );
+  }
 
   sceneDrive.remapToUUids( json.object, json.geometries, 'geometry' );
   sceneDrive.remapToUUids( json.object, json.materials, 'material' );
@@ -138,17 +135,14 @@ sceneDrive.getModels = function( doc ) {
   sceneDrive.doc.materials = doc.get( 'materials' );
   sceneDrive.doc.objects = doc.get( 'objects' );
 
-}
+};
 
 
 sceneDrive.onFileLoaded = function( file ) {
 
   sceneDrive.getModels( file.getModel().getRoot() );
 
-  sceneDrive.scene.__sceneDrive = {};
-  sceneDrive.scene.__sceneDrive.geometries = {}; 
-  sceneDrive.scene.__sceneDrive.materials = {}; 
-  sceneDrive.scene.__sceneDrive.objects = {};
+  sceneDrive.addToSceneDriveMap( sceneDrive.scene );
 
   sceneDrive.loadScene();
 
@@ -160,61 +154,48 @@ sceneDrive.onFileLoaded = function( file ) {
 
 sceneDrive.loadScene = function() {
 
-  sceneDrive.scene.traverse( function( object ) {
-
-    if ( object.uuid != '' ) {
-      sceneDrive.scene.__sceneDrive.objects[ object.uuid ] = object;
-      if ( object.geometry && object.geometry.uuid != '' ) {
-        sceneDrive.scene.__sceneDrive.geometries[ object.geometry.uuid ] = object.geometry;
-      }
-      if ( object.material && object.material.uuid != '' ) {
-        sceneDrive.scene.__sceneDrive.materials[ object.material.uuid ] = object.material;
-      }
-    }
-
-  });
-
-  sceneDrive.loadGeometries( sceneDrive.doc.geometries );
-  sceneDrive.loadMaterials( sceneDrive.doc.materials );
-  sceneDrive.loadObjects( sceneDrive.doc.objects );
+  sceneDrive.loadGeometries();
+  sceneDrive.loadMaterials();
+  sceneDrive.loadObjects();
 
   signals.sceneChanged.dispatch( sceneDrive.scene );
 
 };
 
-sceneDrive.loadGeometries = function( model ) {
+sceneDrive.loadGeometries = function() {
 
-  var list = sceneDrive.modelToList( model );
+  var list = sceneDrive.modelToList( sceneDrive.doc.geometries );
   var geometries = objectLoader.parseGeometries( list );
 
   for ( var i in geometries ) {
     var uuid = geometries[ i ].uuid;
     if ( sceneDrive.scene.__sceneDrive.geometries[ uuid ]) {
-      // TODO: updategeometry
+      // TODO: update geometry
     } else {
       sceneDrive.scene.__sceneDrive.geometries[ uuid ] = geometries[ i ];
     }
   }
 
-}
+};
 
-sceneDrive.loadMaterials = function( model ) {
+sceneDrive.loadMaterials = function( ) {
 
-  var list = sceneDrive.modelToList( model ); 
+  var list = sceneDrive.modelToList( sceneDrive.doc.materials ); 
   var materials = objectLoader.parseMaterials( list );
 
   for ( var i in materials ) {
     var uuid = materials[ i ].uuid;
     if ( sceneDrive.scene.__sceneDrive.materials[ uuid ]) {
-      // TODO: update material
+      sceneDrive.copyObject( sceneDrive.scene.__sceneDrive.materials[ uuid ], materials[ i ] );
+      delete materials[ i ];
     } else {
       sceneDrive.scene.__sceneDrive.materials[ uuid ] = materials[ i ];
     }
   }
 
-} 
+};
 
-sceneDrive.loadObjects = function( model ) {
+sceneDrive.loadObjects = function( ) {
 
   var list = sceneDrive.modelToList( sceneDrive.doc.objects );
 
@@ -223,13 +204,15 @@ sceneDrive.loadObjects = function( model ) {
     var object = objectLoader.parseObject( list[ i ], sceneDrive.scene.__sceneDrive.geometries, sceneDrive.scene.__sceneDrive.materials );
     var uuid = list[ i ].uuid;
 
-    if ( sceneDrive.scene.__sceneDrive.objects[ uuid ]) {
+    if ( sceneDrive.scene.__sceneDrive.objects[ uuid ] ) {
       sceneDrive.copyObject( sceneDrive.scene.__sceneDrive.objects[ uuid ], object );
       delete object;
-      signals.objectChanged.dispatch( sceneDrive.scene.__sceneDrive.objects[ uuid ] );
+      signals.sceneChanged.dispatch( sceneDrive.scene );
+      console.log('object changed');
     } else {
       sceneDrive.scene.__sceneDrive.objects[ uuid ] = object;
       signals.objectAdded.dispatch( sceneDrive.scene.__sceneDrive.objects[ uuid ] );
+      console.log('object added');
     }
   
   }
@@ -248,7 +231,7 @@ sceneDrive.loadObjects = function( model ) {
   
   }
 
-}
+};
 
 sceneDrive.copyObject = function ( target, source ) {
   
@@ -283,7 +266,7 @@ sceneDrive.copyObject = function ( target, source ) {
 
   }
 
-}
+};
 
 sceneDrive.realTimeOptions = {
   appId: sceneDrive.APP_ID,
@@ -298,11 +281,11 @@ sceneDrive.realTimeOptions = {
 
 sceneDrive.connectRealtime = function() {
 
-  sceneDrive.doc.geometries.addEventListener( gapi.drive.realtime.EventType.VALUE_CHANGED, sceneDrive.loadScene );
-  sceneDrive.doc.materials.addEventListener( gapi.drive.realtime.EventType.VALUE_CHANGED, sceneDrive.loadScene );
-  sceneDrive.doc.objects.addEventListener( gapi.drive.realtime.EventType.VALUE_CHANGED, sceneDrive.loadScene );
+  sceneDrive.doc.geometries.addEventListener( gapi.drive.realtime.EventType.VALUE_CHANGED, sceneDrive.loadGeometries );
+  sceneDrive.doc.materials.addEventListener( gapi.drive.realtime.EventType.VALUE_CHANGED, sceneDrive.loadMaterials );
+  sceneDrive.doc.objects.addEventListener( gapi.drive.realtime.EventType.VALUE_CHANGED, sceneDrive.loadObjects );
 
-}
+};
 
 
 sceneDrive.popupOpen = function() {
@@ -322,20 +305,40 @@ sceneDrive.popupOpen = function() {
 
 };
 
-sceneDrive.saveToDrive = function( evt ) {
+sceneDrive.addToSceneDriveMap = function( object ) {
 
-  sceneDrive.setUuids( sceneDrive.scene );
-  localStorage.threejsEditor = JSON.stringify( sceneExporter.parse( sceneDrive.scene ) );
+  object.traverse( function( object ) {
+
+    if ( object.uuid != '' ) {
+      sceneDrive.scene.__sceneDrive.objects[ object.uuid ] = object;
+      if ( object.geometry && object.geometry.uuid != '' ) {
+        sceneDrive.scene.__sceneDrive.geometries[ object.geometry.uuid ] = object.geometry;
+      }
+      if ( object.material && object.material.uuid != '' ) {
+        sceneDrive.scene.__sceneDrive.materials[ object.material.uuid ] = object.material;
+      }
+    }
+
+  });
+
+}
+
+sceneDrive.saveToDrive = function( object ) {
+
+  object = object ? object : sceneDrive.scene;
+
+  sceneDrive.addToSceneDriveMap( object );
 
   if ( !(rtclient.params['fileId']) ) {
 
+    localStorage.threejsEditor = JSON.stringify( sceneExporter.parse( sceneDrive.scene ) );
     sceneDrive.realTimeOptions.defaultTitle = prompt( "Scene Title", "Untitled" );
     sceneDrive.realTimeLoader = new rtclient.RealtimeLoader( sceneDrive.realTimeOptions );
     sceneDrive.realTimeLoader.createNewFileAndRedirect();
 
   } else {
 
-    sceneDrive.getLocalStorage();
+    sceneDrive.saveJSON( sceneExporter.parse( object ) );
     
   }
 
@@ -375,7 +378,6 @@ sceneDrive.connectUi = function() {
 
 sceneDrive.afterAuth = function() {
 
-  document.getElementById( sceneDrive.SAVE_BUTTON_ID ).style.display = 'block';
   document.getElementById( sceneDrive.OPEN_BUTTON_ID ).style.display = 'block';
   document.getElementById( sceneDrive.AUTH_BUTTON_ID ).style.display = 'none';
 
@@ -384,9 +386,47 @@ sceneDrive.afterAuth = function() {
 sceneDrive.init = function( scene ) {
 
   sceneDrive.scene = scene;
+  sceneDrive.scene.__sceneDrive = {};
+  sceneDrive.scene.__sceneDrive.geometries = {}; 
+  sceneDrive.scene.__sceneDrive.materials = {}; 
+  sceneDrive.scene.__sceneDrive.objects = {};
+
   sceneDrive.realTimeLoader = new rtclient.RealtimeLoader( sceneDrive.realTimeOptions );
+
   sceneDrive.connectUi();
-  sceneDrive.realTimeLoader.start( sceneDrive.afterAuth);
+  sceneDrive.realTimeLoader.start( sceneDrive.afterAuth );
+
+  signals.objectChanged.add( function( object ) {
+
+    //if ( rtclient.params['fileId'] ) {
+
+      sceneDrive.saveToDrive( object );
+
+    // }
+
+  } );
+
+  signals.objectAdded.add( function( object ) {
+
+    if ( rtclient.params['fileId'] ) {
+
+      sceneDrive.setUuids( object );
+      sceneDrive.saveToDrive( object );
+
+    }
+
+  } );
+
+  rtclient.onFileLoaded = function(resp){
+
+      if (resp.code == 403) alert('Error 403: Authorization required');
+      if (resp.code == 404) alert('Error 404: File does not exist or access denied');
+      if (resp.editable !== undefined && resp.editable == false)
+        document.getElementById( sceneDrive.SAVE_BUTTON_ID ).style.display = 'none';
+      else
+        document.getElementById( sceneDrive.SAVE_BUTTON_ID ).style.display = 'block';
+
+  }
 
 };
 

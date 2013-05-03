@@ -132,6 +132,21 @@ rtclient.Authorizer.prototype.start = function(onAuthComplete) {
  * Reauthorize the client with no callback (used for authorization failure).
  * @param onAuthComplete {Function} to call once authorization has completed.
  */
+
+rtclient.Authorizer.prototype.authorizeWithPopup = function(handleAuthResult, clientId, userId) {
+  gapi.auth.authorize({
+    client_id: clientId,
+    scope: [
+      rtclient.INSTALL_SCOPE,
+      rtclient.FILE_SCOPE,
+      rtclient.OPENID_SCOPE
+    ],
+    user_id: userId,
+    immediate: false
+  }, handleAuthResult);
+  //console.log(clientId);
+};
+
 rtclient.Authorizer.prototype.authorize = function(onAuthComplete) {
   var clientId = this.clientId;
   var userId = this.userId;
@@ -199,16 +214,17 @@ rtclient.Authorizer.prototype.fetchUserId = function(callback) {
  * @param title {string} title of the newly created file.
  * @param callback {Function} the callback to call after creation.
  */
-rtclient.createRealtimeFile = function(title, callback) {
-  gapi.client.load('drive', 'v2', function() {
-    gapi.client.drive.files.insert({
-      'resource': {
-        mimeType: rtclient.REALTIME_MIMETYPE,
-        title: title
-      }
-    }).execute(callback);
-  });
-}
+
+// rtclient.createRealtimeFile = function(title, callback) {
+//   gapi.client.load('drive', 'v2', function() {
+//     gapi.client.drive.files.insert({
+//       'resource': {
+//         mimeType: rtclient.REALTIME_MIMETYPE,
+//         title: title
+//       }
+//     }).execute(callback);
+//   });
+// }
 
   rtclient.createRealtimeFile = function(title, callback) {
     gapi.client.load('drive', 'v2', function() {
@@ -253,11 +269,12 @@ rtclient.createRealtimeFile = function(title, callback) {
 rtclient.getFileMetadata = function(fileId, callback) {
   gapi.client.load('drive', 'v2', function() {
     gapi.client.drive.files.get({
-      'fileId' : id
+      'fileId' : fileId
     }).execute(callback);
   });
 }
 
+rtclient.onFileLoaded = function(resp) {}
 
 /**
  * Parses the state parameter passed from the Drive user interface after Open
@@ -345,6 +362,8 @@ rtclient.RealtimeLoader.prototype.load = function() {
   var fileId = rtclient.params['fileId'];
   var userId = this.authorizer.userId;
   var state = rtclient.params['state'];
+
+  rtclient.getFileMetadata(fileId, rtclient.onFileLoaded);
 
   // Creating the error callback.
   var authorizer = this.authorizer;
