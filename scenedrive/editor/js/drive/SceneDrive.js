@@ -398,11 +398,12 @@ sceneDrive.init = function( scene ) {
 
   signals.objectChanged.add( function( object ) {
 
-    //if ( rtclient.params['fileId'] ) {
+    if ( rtclient.params['fileId'] ) {
 
       sceneDrive.saveToDrive( object );
+      sceneDrive.saveToDrive( object );
 
-    // }
+    }
 
   } );
 
