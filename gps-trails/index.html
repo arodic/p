@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>GPX Trail</title>
+  <script type="text/javascript" src="js/lib/three.min.js"></script> 
+  <script type="text/javascript" src="js/lib/tween.min.js"></script> 
+  <script type="text/javascript" src="js/lib/dat.gui.min.js"></script>
+  <script type="text/javascript" src="js/lib/jquery.min.js"></script>
+  <script type="text/javascript" src="js/lib/bootstrap.min.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap -->
+  <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+  <script type="text/javascript" src="js/scene.js"></script>
+  <script type="text/javascript" src="js/animate.js"></script>
+  <script type="text/javascript" src="js/controls.js"></script>
+  <script type="text/javascript" src="js/tracks.js"></script>
+  <script type="text/javascript" src="js/bindings.js"></script>
+  <style>
+    *{
+      margin: 0;
+    }
+    body {
+      margin: 0;
+      background-color: #fff;
+      overflow: hidden;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      background-image: url("images/background.png");
+      background-size: cover;
+    }
+    #modal {
+      -webkit-user-select: auto;
+      -khtml-user-select: auto;
+      -moz-user-select: auto;
+      -ms-user-select: auto;
+      user-select: auto;
+    }
+    #footer {
+      position: absolute;
+      bottom: 0;
+    }
+    #counter {
+      display: none;
+      text-align: center;
+    }
+  </style>
+
+  <script type="text/javascript">
+
+    var renderer
+
+    window.onload = function() {
+
+      initRenderer();
+      initScene();
+
+      $("#enterButton").click( function() {
+        $("#intro").hide();
+        $("#counter").show();
+        initTracks();
+      } );
+
+    };
+
+    function initRenderer() {
+
+      renderer = new THREE.WebGLRenderer( { antialias: true });
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      renderer.domElement.id = 'canvas'
+      document.body.appendChild( renderer.domElement );
+
+    }
+
+  </script>
+
+</head>
+<body oncontextmenu="return false;">
+
+
+<script>
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+</script>
+<div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+  <div id="footer" >
+    <a href="https://twitter.com/share" class="twitter-share-button" data-url="aleksandarrodic.com/p/gps-trails" data-text="Check out this GPS data visualization in your browser!" data-via="xyz_ak" data-hashtags="webgl">Tweet</a>
+    <div class="fb-like" data-href="http://aleksandarrodic.com/p/gps-trails" data-send="true" data-layout="button_count" data-width="250" data-show-faces="true" data-font="arial"></div>
+    <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="300" data-href="http://aleksandarrodic.com/p/gps-trails"></div>
+  </div>
+
+
+  <div class="modal" id="modal">
+
+    <div class="modal-header">
+      <h3>GPS Trails</h3>
+    </div>
+
+    <div class="modal-body" id="counter" style="" >
+      counter
+    </div>
+    <div class="modal-body" id="intro" >
+      <p>
+        <img src="./images/sf.png" style="width: 190px; height:auto; float:left; margin-right: 15px;" />
+        This is a data visualization application that projects large amounts of high resolution GPS data onto an interactive 4D globe. The data set visualized here is a collection of 1100 personal tracking files recorded on my smart phone over the course of 3+ years with one data point created every 2 seconds. My goal was to explore how my movement patterns change over time and in different environments. 
+      </p>
+      <p>
+        Keep in mind that this application uses a lot of memory to store and visualize the data and it requires a powerful GPU to render it in real time. In other words, it is designed for high-end machines and remember to close this tab when you are done. If you are interested in technical details, you can read about it in my <a href="http://aleksandarrodic.com/#blog" target="_blank">blog</a>.
+      </p>
+      
+    <a href="https://twitter.com/xyz_ak" class="twitter-follow-button" data-show-count="false">Follow @xyz_ak</a>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="enterButton">Enter</button>
+    </div>
+
+  </div>
+  
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-258449-15']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+  
+</body>
+</html>
