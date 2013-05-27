@@ -167,7 +167,7 @@ function loadTrack(index) {
 
 function createFlightLine(pos, posOld, speed, timeDay, timeDayOld, weekDay, geometry) {
 
-  var segments = 100;
+  var segments = 30;
   var segmentStart, segmentEnd;
   var posStart = new THREE.Vector3(0,0,0);
   var posEnd = new THREE.Vector3(0,0,0);
@@ -289,11 +289,11 @@ function createLod(index) {
 
   var levels = {
     1: [0.1, EARTH_RADIUS+50],
-    2: [1.0, EARTH_RADIUS+200],
+    // 2: [1.0, EARTH_RADIUS+200],
     3: [2.0, EARTH_RADIUS+400],
-    4: [4.0, EARTH_RADIUS+800],
+    // 4: [4.0, EARTH_RADIUS+800],
     5: [8.0, EARTH_RADIUS+1600],
-    6: [16.0, EARTH_RADIUS+2200],
+    // 6: [16.0, EARTH_RADIUS+2200],
     6: [32.0, EARTH_RADIUS+4400]
   }
 

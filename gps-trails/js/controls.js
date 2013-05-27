@@ -44,7 +44,7 @@ initControls = function(){
   controlsGui.add( controls, 'dayFadeIn', 0, lastDay ).listen();
   controlsGui.add( controls, 'dayFadeOut', 0, lastDay ).listen();
 
-  controlsGui.add( controls, 'hour', 0, 1 ).listen();
+  controlsGui.add( controls, 'hour', 0, 24 ).listen();
   controlsGui.add( controls, 'hourRange', 0, 24 ).listen();
   controlsGui.add( controls, 'hourFadeIn', 0, 1 ).listen();
   controlsGui.add( controls, 'hourFadeOut', 0, 1 ).listen();
