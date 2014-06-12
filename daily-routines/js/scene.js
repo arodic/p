@@ -1,9 +1,9 @@
 /**
- * Created by PyCharm.
- * User: akira
- * Date: 12/31/12
- * Time: 7:25 PM
- * To change this template use File | Settings | File Templates.
+  Copyright 2012 All Rights Reserved
+  Aleksandar Rodic
+  @arodic
+  aleksandar.xyz@gmail.com
+  http://aleksandarrodic.com
  */
 
 var EARTH_RADIUS = 6371;

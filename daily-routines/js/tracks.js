@@ -1,9 +1,9 @@
 /**
- * Created by PyCharm.
- * User: akira
- * Date: 12/31/12
- * Time: 7:29 PM
- * To change this template use File | Settings | File Templates.
+  Copyright 2012 All Rights Reserved
+  Aleksandar Rodic
+  @arodic
+  aleksandar.xyz@gmail.com
+  http://aleksandarrodic.com
  */
 
 function Track(filename,date){

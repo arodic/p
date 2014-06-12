@@ -1,3 +1,11 @@
+/**
+  Copyright 2012 All Rights Reserved
+  Aleksandar Rodic
+  @arodic
+  aleksandar.xyz@gmail.com
+  http://aleksandarrodic.com
+ */
+ 
 var lastTouchTime = new Date().getTime();
 
 var touch = new THREE.Vector2();
