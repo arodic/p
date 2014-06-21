@@ -7,9 +7,6 @@
 [submodule "nyc"]
 	path = nyc
 	url = git://github.com/arodic/nyc.git
-[submodule "snow"]
-	path = snow
-	url = git://github.com/arodic/snow.git
 [submodule "hackathon"]
 	path = hackathon
 	url = git://github.com/arodic/hackathon.git
