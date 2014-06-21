@@ -1,0 +1,11 @@
+<link rel="import" href="../div-collapsable/div-collapsable.html">
+
+<polymer-element name="div-showmore" attributes="expanded uuid label" extends="div-collapsable">
+  <template>
+    <link href="div-showmore.css" rel="stylesheet" type="text/css" />
+    <div class="header" id="headerExpanded" on-click="{{toggle}}">{{label}}</div>
+    <div class="header" id="headerCollapsed" on-click="{{toggle}}">{{label}}</div>
+    <div id="wrapper"><content></content></div>
+  </template>
+  <script type="text/javascript" src="div-showmore.js"></script>
+</polymer-element>

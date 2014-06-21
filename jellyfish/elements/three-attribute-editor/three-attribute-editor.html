@@ -1,0 +1,35 @@
+<link rel="import" href="../three-inputs/three-inputs.html">
+<link rel="import" href="../div-showmore/div-showmore.html">
+<link rel="import" href="three-attribute.html">
+
+<polymer-element name="three-attribute-editor" attributes="model settings width labelWidth" constructor="ThreeAttributeEditor">
+  <template>
+    <link rel="stylesheet" href="three-attribute-editor.css">
+    <div id="navigation"><span id="backBtn">❮ Back</span></div>
+    <div id="primaryAttributtes">
+      <template repeat="{{attribute in primaryAttributtes}}">
+        <three-attribute
+        model="{{attribute.model}}"
+        attribute="{{attribute.attribute}}"
+        settings="{{attribute.settings}}"
+        width="{{width}}"
+        labelWidth="{{labelWidth}}">
+        </three-attribute>
+      </template>
+    </div>
+    <div-showmore id="show-more" uuid="{{model.uuid}}">
+      <div id="secondaryAttributtes">
+        <template repeat="{{attribute in secondaryAttributtes}}">
+          <three-attribute
+          model="{{attribute.model}}"
+          attribute="{{attribute.attribute}}"
+          settings="{{attribute.settings}}"
+          width="{{width}}"
+          labelWidth="{{labelWidth}}">
+          </three-attribute>
+        </template>
+      </div>
+    </div-showmore>
+  </template>
+  <script type="text/javascript" src="three-attribute-editor.js"></script>
+</polymer-element>

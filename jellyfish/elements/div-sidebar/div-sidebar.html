@@ -1,0 +1,18 @@
+<polymer-element name="div-sidebar" attributes="expanded width uuid">
+  <template>
+    <link href="div-sidebar.css" rel="stylesheet" type="text/css" />
+    <div id="content">
+      <div id="collapsed">
+        <content select=".collapsed"></content>
+      </div>
+      <div id="expanded">
+        <content></content>
+      </div>
+    </div>
+    <div id="footer" style="text-align:{{otherside}}">
+      <div on-click="{{toggle}}" id="btnClose"></div>
+      <div on-click="{{toggle}}" id="btnOpen"></div>
+    </div>
+  </template>
+  <script type="text/javascript" src="div-sidebar.js"></script>
+</polymer-element>

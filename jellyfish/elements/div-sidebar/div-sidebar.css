@@ -1,0 +1,81 @@
+:host {
+  background: -webkit-linear-gradient(-60deg, #2d2d2d, #545454);
+  background: -moz-linear-gradient(-60deg, #2d2d2d, #545454);
+  background: linear-gradient(-60deg, #2d2d2d, #545454);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0px;
+}
+:host(.left) {
+  right: auto;
+  left: 0;
+  border-right: 1px solid #777;
+}
+:host(:not(.left)) {
+  border-left: 1px solid #777;
+}
+
+:host #content  {
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: absolute;
+  top: 0;
+  bottom: 26px;
+  width: 100%;
+}
+:host(.expanded) > #content > #collapsed {
+  display: none;
+}
+:host(:not(.expanded)) > #content > #expanded {
+  display: none;
+}
+
+:host(.expanded) #btnOpen {
+  display: none;
+}
+:host(:not(.expanded)) #btnClose {
+  display: none;
+}
+
+:host > #footer {
+  color: white;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 26px;
+  height: 26px;
+  background: rgba(0,0,0,0.4);
+  border-top: 1px solid #666;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  visibility: visible;
+}
+:host(.left) > #footer {
+  text-align: right;
+}
+:host > #footer > div {
+  cursor: pointer;
+  padding: 0 8px 0 8px;
+}
+:host(:not(.left)) > #footer > #btnClose:before {
+  content: " Close ❯ ";
+}
+:host(.left) > #footer > #btnClose:before {
+  content: " ❮ Close ";
+}
+:host(:not(.left)) > #footer > #btnOpen:before {
+  content: " ❮❮ ";
+}
+:host(.left) > #footer > #btnOpen:before {
+  content: " ❯❯ ";
+}

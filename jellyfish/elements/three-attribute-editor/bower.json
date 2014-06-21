@@ -1,0 +1,25 @@
+{
+  "name": "three-attribute-editor",
+  "version": "0.2.4",
+  "homepage": "https://github.com/arodic/three-attribute-editor",
+  "authors": [
+    "Aleksandar Rodic <aleksandar.xyz@gmail.com>"
+  ],
+  "description": "Attribute editor for three.js objects.",
+  "main": "three-attribute-editor.html",
+  "keywords": [
+    "attribute",
+    "editor",
+    "threejs",
+    "ui",
+    "polymer",
+    "polymerjs",
+    "web-components",
+    "three-attribute-editor"
+  ],
+  "license": "Apache 2.0",
+  "dependencies": {
+    "three-inputs": "~0.2.4",
+    "div-showmore": "~0.2.4"
+  }
+}

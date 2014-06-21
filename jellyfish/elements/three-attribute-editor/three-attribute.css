@@ -1,0 +1,45 @@
+:host {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  display: block;
+  padding: 1px 0 0 0;
+}
+
+:host(:hover) {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+#label {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  vertical-align: top;
+  display: inline-block;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+  padding-right: 5px;
+}
+#attribute {
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: top;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  background: rgba(0,0,0,0.1);
+}
+#label.linked, #label.linkable {
+  color: #0074FF;
+  cursor: pointer;
+}
+
+#label.linkable:after {
+  content: " ☐";
+}
+#label.linkable.linked:after {
+  content: " ☑";
+}

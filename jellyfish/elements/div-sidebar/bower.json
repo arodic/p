@@ -1,0 +1,20 @@
+{
+  "name": "div-sidebar",
+  "version": "0.2.4",
+  "homepage": "https://github.com/arodic/div-sidebar",
+  "authors": [
+    "Aleksandar Rodic <aleksandar.xyz@gmail.com>"
+  ],
+  "description": "Collapsable sidebar custom element with open/close toggle button.",
+  "main": "div-sidebar.html",
+  "keywords": [
+    "sidebar",
+    "collapsable",
+    "ui",
+    "polymer",
+    "polymerjs",
+    "web-components",
+    "div-sidebar"
+  ],
+  "license": "Apache 2.0"
+}

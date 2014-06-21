@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1, maximum-scale=1"/>
+  <title>&#60;div-collapsable&#62;</title>
+
+  <script src="../platform/platform.js"></script>
+  <script src="../polymer/polymer.js"></script>
+
+  <link rel="import" href="div-collapsable.html">
+
+  <style type="text/css">
+    html {
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+    body{
+      background: #333;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: white;
+    }
+    div-collapsable {
+      background: black;
+    }
+    a {
+      color: white;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h3><a href="https://github.com/arodic/div-collapsable/" target="_blank">&#60;div-collapsable&#62;</a></h3>
+  <div-collapsable label="div-collapsable" uuid="9405CA3F-D162-414B-82EE-543CC30E94D5">
+    The content of &#60;div-collapsable&#62; is displayed here.<br />If set, the optional uuid attribute will make the element remember it's state after the page is closed. 
+  </div-collapsable>
+  <p>Click the label to expand/collapse.</p>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-258449-15', 'aleksandarrodic.com');
+  ga('send', 'pageview');
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "div-showmore",
+  "version": "0.2.4",
+  "homepage": "https://github.com/arodic/div-showmore",
+  "authors": [
+    "Aleksandar Rodic <aleksandar.xyz@gmail.com>"
+  ],
+  "description": "Collapsable div custom element with a show more/less toggle bar. ",
+  "main": "div-showmore.html",
+  "keywords": [
+    "collapsable",
+    "threejs",
+    "ui",
+    "polymer",
+    "polymerjs",
+    "web-components",
+    "div-showmore"
+  ],
+  "license": "Apache 2.0",
+  "dependencies": {
+    "div-collapsable": "~0.2.4"
+  }
+}

@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+.header {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #0074FF;;
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 14px;
+  text-align: center;
+  /*background: rgba(0,0,0,0.1);*/
+}
+.header:before, .header:after {
+  display: inline-block;
+  width: 18px;
+  padding: 0 4px;
+  opacity: 0.5;
+}
+#headerCollapsed:before, #headerCollapsed:after {
+  content: "⊻";
+}
+#headerExpanded:before, #headerExpanded:after {
+  content: "⊼";
+}
+
+#headerExpanded:not(.expanded) {
+  display: none;
+}
+#headerCollapsed.expanded {
+  display: none;
+}
+#wrapper:not(.expanded) {
+  visibility: hidden;
+  position: absolute;
+}
