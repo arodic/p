@@ -4,12 +4,6 @@
 [submodule "mass"]
 	path = mass
 	url = git://github.com/arodic/mass64k.git
-[submodule "nyc"]
-	path = nyc
-	url = git://github.com/arodic/nyc.git
-[submodule "hackathon"]
-	path = hackathon
-	url = git://github.com/arodic/hackathon.git
 [submodule "jellyfish"]
 	path = jellyfish
 	url = git@github.com:arodic/jellyfish.git
