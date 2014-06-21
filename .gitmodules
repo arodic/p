@@ -1,9 +1,6 @@
 [submodule "chrysaora"]
 	path = chrysaora
 	url = git://github.com/arodic/Chrysaora.git
-[submodule "mass"]
-	path = mass
-	url = git://github.com/arodic/mass64k.git
 [submodule "jellyfish"]
 	path = jellyfish
 	url = git@github.com:arodic/jellyfish.git
