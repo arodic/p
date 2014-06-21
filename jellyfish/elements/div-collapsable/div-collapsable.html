@@ -1,0 +1,71 @@
+<polymer-element name="div-collapsable" attributes="expanded uuid label">
+  <template>
+    <style type="text/css">
+      :host {
+        display: block;
+      }
+      .header {
+        font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        color: white;
+        text-align: left;
+        cursor: pointer;
+        padding: 2px 4px;
+        background: rgba(0,0,0,0.4);
+      }
+      .header:hover {
+        color: #e2aa07;
+      }
+      .header:before, .header:after {
+        display: inline-block;
+        width: 18px;
+        padding: 0 4px;
+        opacity: 0.5;
+      }
+      #headerCollapsed:before {
+        content: "▷";
+      }
+      #headerExpanded:before {
+        content: "▽";
+      }
+
+      #headerExpanded:not(.expanded) {
+        display: none;
+      }
+      #headerCollapsed.expanded {
+        display: none;
+      }
+      #wrapper:not(.expanded) {
+        display: none;
+      }
+    </style>
+    <div class="header" id="headerExpanded" on-click="{{toggle}}">{{label}}</div>
+    <div class="header" id="headerCollapsed" on-click="{{toggle}}">{{label}}</div>
+    <div id="wrapper"><content></content></div>
+  </template>
+  <script>
+    Polymer('div-collapsable', {
+      label: 'no label',
+      expanded: false,
+      ready: function() {
+        if (this.uuid) {
+          if (localStorage[this.uuid+'expanded'] == 'true') this.expanded = true;
+          if (localStorage[this.uuid+'expanded'] == 'false') this.expanded = false;
+        }
+        this.expandedChanged();
+      },
+      toggle: function() {
+        this.expanded = !this.expanded;
+      },
+      uuidChanged: function() {
+        this.ready();
+      },
+      expandedChanged: function() {
+        this.$.headerExpanded.classList.toggle('expanded', this.expanded);
+        this.$.headerCollapsed.classList.toggle('expanded', this.expanded);
+        this.$.wrapper.classList.toggle('expanded', this.expanded);
+        localStorage[this.uuid+'expanded'] = this.expanded;
+      }
+    });
+  </script>
+</polymer-element>

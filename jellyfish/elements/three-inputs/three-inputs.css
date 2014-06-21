@@ -1,0 +1,52 @@
+:host {
+  display: inline-block;
+  /*white-space: nowrap;*/
+  position: relative;
+}
+
+input {
+  background: transparent;
+  display: block;
+  height: inherit;
+  width: 100%;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  border: 0;
+  cursor: inherit;
+}
+textarea:focus, input:focus, span:focus{
+  outline: 0;
+}
+.checkbox {
+  cursor: pointer;
+  display: inline-block;
+}
+.checkbox:after {
+  content: "false";
+}
+.checkbox.true:after {
+  content: "true";
+}
+
+.half-width {
+  width: calc(50% - 1px);
+  margin-right: 1px;
+}
+.third-width {
+  width: calc(33.5% - 1px);*/
+  margin-right: 1px;
+}
+.quarter-width {
+  width: calc(25% - 1px);
+  margin-right: 1px;
+}
+#blocker {
+  display: block;
+  height: inherit;
+  width: auto;
+  position: absolute;
+  top:0;
+  left: 0;
+  cursor: ew-resize;
+}
