@@ -30,15 +30,37 @@ Polymer({
     if (typeof value == "boolean") type = "input-boolean";
     else if (typeof value == "number") type = "input-number";
     else if (typeof value == "string") type = "input-string";
-    else if ( value instanceof THREE.Vector2 ) type = 'input-vector2';
-    else if ( value instanceof THREE.Vector3 ) type = 'input-vector3';
-    else if ( value instanceof THREE.Euler ) type = 'input-vector3';
-    else if ( value instanceof THREE.Color ) type = 'input-rgb';
-    else if ( value instanceof THREE.Vector4 ) type = 'input-vector4';
-    else if ( value instanceof THREE.Quaternion ) type = 'input-vector4';
-    else if ( value instanceof THREE.Matrix3 ) type = 'input-matrix3';
-    else if ( value instanceof THREE.Matrix4 ) type = 'input-matrix4';
-    else if ( value instanceof THREE.Texture ) type = 'input-texture';
+
+    var isVecArray = function ( object, length ) {
+      if ((object instanceof Float32Array || object instanceof Array) && object.length == length ) {
+        for (var i = object.length; i--;) {
+          if (typeof object[i] !== "number") {
+            return false;
+          }
+        }
+        return true;
+      }
+      return false;
+    };
+
+    // TODO: make THREE-agnotic 
+    if (window.THREE !== undefined && type === undefined) {
+      if ( value instanceof THREE.Vector2 ) type = 'input-vector2';
+      else if ( value instanceof THREE.Vector3 ) type = 'input-vector3';
+      else if ( value instanceof THREE.Euler ) type = 'input-vector3';
+      else if ( value instanceof THREE.Color ) type = 'input-vector3';
+      else if ( value instanceof THREE.Vector4 ) type = 'input-vector4';
+      else if ( value instanceof THREE.Quaternion ) type = 'input-vector4';
+      else if ( value instanceof THREE.Matrix3 ) type = 'input-matrix3';
+      else if ( value instanceof THREE.Matrix4 ) type = 'input-matrix4';
+      else if ( value instanceof THREE.Texture ) type = 'input-texture';
+    }
+
+    if (type === undefined) {
+      if ( isVecArray(value, 2) ) type = 'input-vector2';
+      else if ( isVecArray(value, 3) ) type = 'input-vector3';
+      else if ( isVecArray(value, 4) ) type = 'input-vector4';
+    }
 
     if (type !== undefined) {
       this.inputElem = document.createElement(type);
