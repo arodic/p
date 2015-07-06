@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Blinkworld � Festival Novih Komunikacija</title>
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				color: #FFF;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+
+				background-color: #336699;
+				margin: 0px;
+				overflow: hidden;
+			}
+
+			#info {
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+			}
+
+			a {
+
+				color: #FFCC99;
+			}
+
+			#fullscreen {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-top:-25px;
+				margin-left: -210px;
+				text-align: center;
+				font-size: 36px;
+				font-weight: bold;
+				color: white;
+				text-shadow: 2px 2px 0 black;
+				background-color: red;
+				padding: 5px 20px;
+				}
+
+			#fullscreen.hide { display:none; }
+		</style>
+	</head>
+	<body>
+		<div id="info"><a href="http://b-link.rs" target="_blank">Blinkworld</a> - Festival Novih Komunikacija</div>
+		<div id="fullscreen">KLIK ZA PUN EKRAN</div>
+
+		<script src="./js/lib/three.min.js"></script>
+    <script src="./js/ball.js"></script>
+		<script src="./js/snowflake.js"></script>
+
+		<script>
+			// Prelazak na pun ekran --------------------------------------------------------------------------------------------
+			var body = document.body;
+			body.onclick = requestFullScreen; // Slu�anje klika
+
+			// Funkcija za prelazak na ceo ekran
+			function requestFullScreen() {
+				// Skrivanje teksta
+				document.getElementById('fullscreen').setAttribute('class', 'hide');
+
+				body.onclick = null;
+				var requestMethod = body.requestFullScreen || body.webkitRequestFullScreen || body.mozRequestFullScreen || body.msRequestFullScreen;
+
+				if (requestMethod) {
+					requestMethod.call(body);
+				}
+			}
+
+			// Promena velicine ekrana
+			window.onresize = function() {
+				console.log('r');
+			};
+
+
+
+			// TREE.JS primer ---------------------------------------------------------------------------------------------------
+			// Variable
+			var SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 2048, SNOWFLAKE_LEN = 40, SNOWFLAKE_HEIGHT = 10;
+			var container;
+			var camera, scene, light, renderer;
+			var plane;
+			var snowflake = [], logo;
+      var time;
+
+
+			init();		// Kreiranje scene i elemenata za scenu
+			animate();	// Animiranje elemenata na sceni
+
+
+			// Funkcija za kreiranje prostora za crtanje scene (<canvas>), scena, kamera, svetlo ...
+			function init() {
+				// Kreiranje:
+
+				// <canvas>-a
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+
+				// Scene
+				scene = new THREE.Scene();
+				scene.fog = new THREE.FogExp2( 0x336699, 0.02 ); // Magla za scenu
+
+        camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.001, 1500 );
+				camera.position.z = 25;
+        camera.position.y = 2;
+
+        light = new THREE.DirectionalLight( 0xffffff );
+				light.position.set( 1,1,1 );
+        light.castShadow = true;
+        light.shadowCameraNear = 1;
+				light.shadowCameraFar = 200;
+				light.shadowCameraFov = 10;
+        light.shadowCameraLeft = -35;
+        light.shadowCameraRight = 35;
+        light.shadowCameraTop = 35;
+        light.shadowCameraBottom = -35;
+				light.shadowBias = 0.0001;
+				light.shadowDarkness = 0.5;
+				light.shadowMapWidth = 1024;
+				light.shadowMapHeight = 1024;
+				scene.add( light );
+
+				var planeGeo = new THREE.PlaneGeometry(100, 100, 1, 1);
+        var planeMat = new THREE.MeshLambertMaterial( { color: new THREE.Color( 0x999999) } );
+        plane = new THREE.Mesh( planeGeo, planeMat );
+        plane.receiveShadow = true;
+        plane.rotation.x = -Math.PI/2;
+        scene.add(plane);
+
+        for(var i = 0; i<20; i++){
+          balls[i] = new Ball('images/blink.png', Math.random()+1, Math.random()*50-25, Math.random()*3, Math.random()*50-25);
+          scene.add(balls[i].mesh);
+        }
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.setClearColor( scene.fog.color, 1 );
+        renderer.shadowMapEnabled = true;
+				renderer.shadowMapSoft = true;
+
+        document.body.appendChild( renderer.domElement );
+
+
+			}
+  
+			function animate() {
+
+        time = new Date().getTime();
+
+				requestAnimationFrame( animate );
+
+        for(var i = 0; i<20; i++){
+          balls[i].update();
+        }
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>

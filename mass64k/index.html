@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html lang="en"><head>
+<title>The Origin of Mass - WebGL - gl64k</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<style type="text/css">
+	* { margin: 0px; padding:0px; }
+</style>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-258449-15']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head><body style="background: #000;">
+<a href="https://twitter.com/share" class="twitter-share-button" data-via="xyz_ak">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+<a href="https://twitter.com/xyz_ak" class="twitter-follow-button" data-show-count="false">Follow @xyz_ak</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+<canvas id="canvas"></canvas>
+<script type="text/javascript" >
+	var gl = (function () {
+		var d=document, w=window, c=d.getElementById('canvas'),
+		gl = c.getContext('experimental-webgl');
+
+		function resize() {
+			c.width = w.innerWidth;
+			c.height = w.innerHeight;
+			gl.viewport(0, 0, c.width, c.height);
+		}; resize(); w.addEventListener('resize', resize, false);
+
+		return gl;
+	})();
+</script>
+<script type="text/javascript" src="mass.js"></script>
+</body></html>

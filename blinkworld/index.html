@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Blinkworld � Festival Novih Komunikacija</title>
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				color: #FFF;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+
+				background-color: #336699;
+				margin: 0px;
+				overflow: hidden;
+			}
+
+			#info {
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+			}
+
+			a {
+
+				color: #FFCC99;
+			}
+
+			#fullscreen.hide { display:none; }
+
+			#blocker {
+
+				position: absolute;
+
+				width: 100%;
+				height: 100%;
+
+				background-color: rgba(0,0,0,0.5);
+
+			}
+
+			#instructions {
+
+				width: 100%;
+				height: 100%;
+
+				display: -webkit-box;
+				display: -moz-box;
+				display: box;
+
+				-webkit-box-orient: horizontal;
+				-moz-box-orient: horizontal;
+				box-orient: horizontal;
+
+				-webkit-box-pack: center;
+				-moz-box-pack: center;
+				box-pack: center;
+
+				-webkit-box-align: center;
+				-moz-box-align: center;
+				box-align: center;
+
+				color: #ffffff;
+				text-align: center;
+
+				cursor: pointer;
+
+			}
+      
+		</style>
+	</head>
+	<body>
+		<div id="info"><a href="http://b-link.rs" target="_blank">Blinkworld</a> - Festival Novih Komunikacija</div>
+		<div id="fullscreen"></div>
+
+    <div id="blocker">
+
+			<div id="instructions">
+				<span style="font-size:40px">KLIK ZA PUN EKRAN</span>
+				<br />
+				(W, A, S, D = Move, SPACE = Jump, MOUSE = Look around)
+			</div>
+
+		</div>
+
+		<script src="./js/lib/three.min.js"></script>
+    <script src="./js/lib/PointerLockControls.js"></script>
+    <script src="./js/ball.js"></script>
+		<script src="./js/snowflake.js"></script>
+    <script src="js/lib/ColladaLoader.js"></script>
+
+		<script>
+
+    	// Variable
+			var SHADOW_MAP_WIDTH = 1024, SHADOW_MAP_HEIGHT = 1024, SNOWFLAKE_LEN = 40, SNOWFLAKE_HEIGHT = 10;
+			var controls, camera, scene, light, hemisphereLight, renderer, ray, intersectObjects = [];
+			var plane, cake;
+			var snowflake = [], logo;
+			var time;
+
+
+			// Prelazak na pun ekran --------------------------------------------------------------------------------------------
+			var body = document.body;
+			body.onclick = requestFullScreen; // Slu�anje klika
+
+			// Funkcija za prelazak na ceo ekran
+			function requestFullScreen() {
+				// Skrivanje teksta
+				document.getElementById('fullscreen').setAttribute('class', 'hide');
+
+				body.onclick = null;
+				var requestMethod = body.requestFullScreen || body.webkitRequestFullScreen || body.mozRequestFullScreen || body.msRequestFullScreen;
+
+				if (requestMethod) {
+					requestMethod.call(body);
+				}
+			}
+
+			// Promena velicine ekrana
+			window.onresize = function() {
+				console.log('resized!');
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+			};
+
+
+      // Pointer lock ----------------------------------------------------------------
+      var blocker = document.getElementById( 'blocker' );
+      var instructions = document.getElementById( 'instructions' );
+
+      // http://www.html5rocks.com/en/tutorials/pointerlock/intro/
+
+      var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+
+      if ( havePointerLock ) {
+
+        var element = document.body;
+
+        var pointerlockchange = function ( event ) {
+
+          if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+
+            controls.enabled = true;
+
+            blocker.style.display = 'none';
+
+          } else {
+
+            controls.enabled = false;
+
+            blocker.style.display = '-webkit-box';
+            blocker.style.display = '-moz-box';
+            blocker.style.display = 'box';
+
+            instructions.style.display = '';
+
+          }
+
+        }
+
+        var pointerlockerror = function ( event ) {
+
+          instructions.style.display = '';
+
+        }
+
+        // Hook pointer lock state change events
+        document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+        document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+        document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+
+        document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+        document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+        document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+
+        instructions.addEventListener( 'click', function ( event ) {
+
+          instructions.style.display = 'none';
+
+          // Ask the browser to lock the pointer
+          element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+
+          if ( /Firefox/i.test( navigator.userAgent ) ) {
+
+            var fullscreenchange = function ( event ) {
+
+              if ( document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element ) {
+
+                document.removeEventListener( 'fullscreenchange', fullscreenchange );
+                document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
+
+                element.requestPointerLock();
+              }
+
+            }
+
+            document.addEventListener( 'fullscreenchange', fullscreenchange, false );
+            document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
+
+            element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+
+            element.requestFullscreen();
+
+          } else {
+
+            element.requestPointerLock();
+
+          }
+
+        }, false );
+
+      } else {
+
+        instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+
+      }
+
+
+			// TREE.JS primer ---------------------------------------------------------------------------------------------------
+
+
+
+			init();		// Kreiranje scene i elemenata za scenu
+			animate();	// Animiranje elemenata na sceni
+
+
+			// Funkcija za kreiranje prostora za crtanje scene (<canvas>), scena, kamera, svetlo ...
+			function init() {
+
+				// Scene
+				scene = new THREE.Scene();
+				scene.fog = new THREE.FogExp2( 0x336699, 0.02 ); // Magla za scenu
+
+        ray = new THREE.Ray();
+				ray.direction.set( 0, -1, 0 );
+
+
+				// Kamera
+				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.001, 1500 );
+				//camera.position.z = 25;
+				//camera.position.y = 2;
+
+        controls = new THREE.PointerLockControls( camera );
+        scene.add( controls.getObject() );
+
+
+				// Svetlo
+				light = new THREE.DirectionalLight( 0xffffff );
+				light.position.set( 1,1,1 );
+
+
+				// Senka
+				light.castShadow = true;
+				light.shadowCameraNear = 1;
+				light.shadowCameraFar = 200;
+				light.shadowCameraFov = 10;
+				light.shadowCameraLeft = -35;
+				light.shadowCameraRight = 35;
+				light.shadowCameraTop = 35;
+				light.shadowCameraBottom = -35;
+				//light.shadowCameraVisible = true;
+				light.shadowBias = 0.0001;
+				light.shadowDarkness = 0.5;
+				light.shadowMapWidth = SHADOW_MAP_WIDTH;
+				light.shadowMapHeight = SHADOW_MAP_HEIGHT;
+				scene.add( light );	// Dodavanje svetla na scenu
+
+        hemisphereLight = new THREE.HemisphereLight( 0x336699, 0x115522, 1 );
+        scene.add( hemisphereLight );
+
+
+
+				// Podloga
+				var planeGeo = new THREE.PlaneGeometry(100, 100, 100, 100);
+				var planeMat = new THREE.MeshLambertMaterial( { color: new THREE.Color( 0x225533) } );
+				plane = new THREE.Mesh( planeGeo, planeMat );
+				plane.castShadow = true;
+				plane.receiveShadow = true;
+				plane.rotation.x = -Math.PI/2;
+				scene.add(plane);	// Dodavanje podloge na scenu
+
+        var loader = new THREE.ColladaLoader();
+        loader.options.convertUpAxis = true;
+        loader.load( './dae/cake.dae', function ( collada ) {
+
+          cake = collada.scene;
+
+          cake.scale.x = cake.scale.y = cake.scale.z = 0.1;
+          cake.updateMatrix();
+
+          intersectObjects = cake.children[0].children;
+
+          scene.add(cake);
+
+        } );
+
+
+				// ELEMENTI
+				// Logo
+				logo = new Ball('./images/blink.png', 1, 0, 8, 0 );
+				scene.add(logo.mesh);
+
+				// Pahuljice
+				for(var i = 0; i<SNOWFLAKE_LEN; i++){
+					snowflake[i] = new Snowflake();
+					snowflake[i].resetPosition();
+					scene.add(snowflake[i].mesh);
+				}
+
+
+				// Render
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setClearColor( scene.fog.color, 1 );
+				renderer.shadowMapEnabled = true;
+				renderer.shadowMapSoft = true;
+				document.body.appendChild( renderer.domElement );
+			}
+
+
+
+			// Animiranje scene (elemenata na sceni)
+			function animate() {
+        controls.isOnObject( false );
+
+        ray.origin.copy( controls.getObject().position );
+				ray.origin.y = 10;
+
+        var intersections = ray.intersectObjects(intersectObjects);
+
+				var distance = 10;
+        
+        if ( intersections.length > 0 ) {
+
+					distance = intersections[ 0 ].distance;
+
+				}
+
+        controls.update( Date.now() - time );
+
+        controls.getObject().position.y = Math.max(controls.getObject().position.y, 10-distance+1.5);
+        
+				// Trenutno vreme � neophodno za animiranje elemenata
+				time = new Date().getTime();
+
+
+				// Animiranje svakog elementa pojedina�no
+				for(var i = 0; i<SNOWFLAKE_LEN; i++){
+					snowflake[i].update();
+				}
+				logo.update();
+
+				// Renderovanje scene (Iscrtavanje)
+				renderer.render( scene, camera );
+
+				// Ponovno pozivanje funkcije animate() kako bi se 
+				// non-stop ra�unale promene i ponovo iscrtavao frejm
+				requestAnimationFrame( animate );
+			}
+		</script>
+	</body>
+</html>
