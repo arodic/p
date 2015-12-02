@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <title>Fragments</title>
+
+  <!-- Chrome for Android theme color -->
+  <meta name="theme-color" content="#000000">
+  <!-- Tile color for Win8 -->
+  <meta name="msapplication-TileColor" content="#000000">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Fragments">
+  <link rel="icon" href="favicon.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Fragments">
+  <link rel="apple-touch-icon" href="preview.png">
+
+  <!-- Tile icon for Win8 (144x144) -->
+  <meta name="msapplication-TileImage" content="preview144.png">
+
+  <meta name="description" content="Point Cloud of 3D objects in Shanghai."/>
+
+  <meta itemprop="name" content="Point Cloud">
+  <meta itemprop="description" content="Point Cloud of 3D objects in Shanghai.">
+  <meta itemprop="image" content="preview.png">
+
+  <link rel="image_src" href="preview_full.png" />
+
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+  <link rel="import" href="cloud-app.html" />
+
+  <style>
+    html {
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      width: 100%;
+      height: 100%;
+    }
+    body{
+      margin: 0;
+      padding: 0;
+      widht: 100%;
+      height: 100%;
+      font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #ddd;
+      overflow: hidden;
+    }
+  </style>
+
+</head>
+<body>
+
+<span id="browser-sync-binding"></span>
+
+<cloud-app></cloud-app>
+
+</body>
+</html>

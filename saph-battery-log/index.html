@@ -1,0 +1,251 @@
+<!doctype html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+  <title>Data sonification</title>
+
+  <!-- Chrome for Android theme color -->
+  <meta name="theme-color" content="#000000">
+  <!-- Tile color for Win8 -->
+  <meta name="msapplication-TileColor" content="#000000">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Data Sonification">
+  <link rel="icon" href="favicon.ico">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Data Sonification">
+  <link rel="apple-touch-icon" href="preview.png">
+
+  <!-- Tile icon for Win8 (144x144) -->
+  <meta name="msapplication-TileImage" content="preview144.png">
+
+  <meta name="description" content="Data sonification of battery data collected over a course of months."/>
+
+  <meta itemprop="name" content="Data sonification">
+  <meta itemprop="description" content="Data sonification of battery data collected over a course of months.">
+  <meta itemprop="image" content="preview.png">
+
+  <link rel="image_src" href="preview.png" />
+
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <script src="js/CSVToArray.js"></script>
+  <script src="js/MakeBuffers.js"></script>
+  <script src="js/MakeLine.js"></script>
+  <script src="js/source.js"></script>
+  <script src="js/note.js"></script>
+
+
+  <link rel="import" href="ree-app.html">
+
+  <style>
+    html {
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      width: 100%;
+      height: 100%;
+    }
+    body{
+      margin: 0;
+      padding: 0;
+      widht: 100%;
+      height: 100%;
+      font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #ddd;
+      overflow: hidden;
+    }
+    #currentdate {
+      font-size: 2rem;
+      font-weight: lighter;
+      left: 1em;
+      top: 1em;
+      position: fixed;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    ree-app /deep/ three-renderer > ree-button {
+      display: none;
+    }
+  </style>
+
+</head>
+<body>
+
+<span id="browser-sync-binding"></span>
+
+<ree-app playing></ree-app>
+
+<div id="currentdate">date</div>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+  precision mediump float;
+  precision mediump int;
+
+  uniform float currentTime;
+
+  uniform mat4 modelMatrix; // optional
+  uniform mat4 modelViewMatrix; // optional
+  uniform mat4 projectionMatrix; // optional
+
+  attribute vec3 position;
+  attribute float time;
+  attribute float signal;
+
+  varying float xpos;
+
+  void main()	{
+    vec3 pos = vec3((time - currentTime) * 200. + 1., signal, 0.0);
+    xpos = pos.x;
+    gl_Position = vec4(pos, 1.0);
+    gl_Position = modelMatrix *  vec4(pos, 1.0);
+  }
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+  precision mediump float;
+  precision mediump int;
+
+  varying float xpos;
+  uniform vec3 color;
+
+  void main()	{
+    gl_FragColor = vec4(mix(color, vec3(1.0), xpos), 1.0);
+  }
+</script>
+
+<script>
+(function() {
+
+  var app = document.querySelector('ree-app');
+
+  app.addEventListener('click', function () {
+    if (app.requestFullscreen) {
+      document.body.requestFullscreen();
+    } else if (app.msRequestFullscreen) {
+      document.body.msRequestFullscreen();
+    } else if (app.mozRequestFullScreen) {
+      document.body.mozRequestFullScreen();
+    } else if (app.webkitRequestFullscreen) {
+      document.body.webkitRequestFullscreen();
+    }
+  });
+
+  var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  var light = new THREE.AmbientLight(0xffffff);
+  app.scene.add(light);
+
+  var loader = new THREE.XHRLoader();
+
+  var LEN = 1;
+  var RATE = 44100;
+  var COUNT = RATE * LEN;
+  var SPEED = 0.0025;
+  var cc;
+
+  var currentdate = document.querySelector('#currentdate');
+
+  loader.load('data/batteryLog2015.csv', function(data) {
+
+    var array = CSVToArray(data);
+    var buffers = MakeBuffers(array, COUNT);
+
+    var sources = {
+      level_up: new Source(audioCtx, SPEED, 'samples/electronic_atmosphere.wav', buffers.level_up, buffers.time),
+      level_down: new Source(audioCtx, SPEED, 'samples/thick_pad.wav', buffers.level_down, buffers.time),
+      volt: new Source(audioCtx, SPEED, 'samples/bass_atmosphere.wav', buffers.volt, buffers.time),
+      volt_up: new Source(audioCtx, SPEED, 'samples/dark_buzz.wav', buffers.volt_up, buffers.time),
+      volt_down: new Source(audioCtx, SPEED, 'samples/bright_pulse.wav', buffers.volt_down, buffers.time),
+      temp: new Source(audioCtx, SPEED, 'samples/ambient_loop.wav', buffers.temp, buffers.time)
+    };
+
+    sources.level_up.mesh.position.y = 5/10;
+    sources.level_up.mesh.scale.y = 1/10;
+    sources.level_up.mesh.material.uniforms.color.value = new THREE.Color(0.6, 0.8, 0.4);
+    app.scene.add(sources.level_up.mesh);
+
+    sources.level_down.mesh.position.y = 3/10;
+    sources.level_down.mesh.scale.y = 1/10;
+    sources.level_down.mesh.material.uniforms.color.value = new THREE.Color(1, 0.6, 0.3);
+    app.scene.add(sources.level_down.mesh);
+
+    sources.volt.mesh.position.y = 1/10;
+    sources.volt.mesh.scale.y = 1/10;
+    sources.volt.mesh.material.uniforms.color.value = new THREE.Color(0.5, 0.6, 0.9);
+    app.scene.add(sources.volt.mesh);
+
+    sources.volt_up.mesh.position.y = -1/10;
+    sources.volt_up.mesh.scale.y = 1/10;
+    sources.volt_up.mesh.material.uniforms.color.value = new THREE.Color(0.8, 0.5, 0.9);
+    app.scene.add(sources.volt_up.mesh);
+
+    sources.volt_down.mesh.position.y = -3/10;
+    sources.volt_down.mesh.scale.y = 1/10;
+    sources.volt_down.mesh.material.uniforms.color.value = new THREE.Color(0.2, 0.9, 0.9);
+    app.scene.add(sources.volt_down.mesh);
+
+    sources.temp.mesh.position.y = -5/10;
+    sources.temp.mesh.scale.y = 1/10;
+    sources.temp.mesh.material.uniforms.color.value = new THREE.Color(0.8, 0.8, 0.2);
+    app.scene.add(sources.temp.mesh);
+
+    var startTime = audioCtx.currentTime;
+    var previousStatus;
+    var oldProgress = 0;
+
+    var note0 = new Note(audioCtx, 'samples/events/yeah.wav');
+    var note1 = new Note(audioCtx, 'samples/events/buzz.wav');
+    var note2 = new Note(audioCtx, 'samples/events/kick.wav');
+    var note3 = new Note(audioCtx, 'samples/events/trrrr.wav');
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+
+      var progress = (oldProgress * 2 + (audioCtx.currentTime - startTime - 0.18) * SPEED) / 3 % 1;
+      oldProgress = progress;
+
+      var sample = Math.floor(COUNT * progress);
+      var status = buffers.status[sample];
+
+      var date = buffers.date[sample];
+      currentdate.innerText = date;
+
+      if (status !== previousStatus) {
+        switch (status) {
+          case 'Charge':
+            note1.play();
+            break;
+          case 'Use':
+            note2.play();
+            break;
+          case 'Unplugged':
+            note3.play();
+            break;
+          case 'FULL':
+            note0.play();
+            break;
+        }
+      }
+
+      previousStatus = status;
+
+      for (var i in sources) {
+        sources[i].mesh.material.uniforms.currentTime.value = progress;
+      }
+    }
+
+    animate();
+
+  });
+}());
+
+</script>
+
+</body>
+</html>

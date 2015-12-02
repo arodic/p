@@ -1,0 +1,107 @@
+<link rel="import" href="ree-app.html">
+<!-- <link rel="import" href="../../ree.js/app/ree-app.html"> -->
+<link rel="import" href="field.html">
+
+<script src="js/tween.min.js"></script>
+<script src="js/FBOUtils.js"></script>
+<script src="js/Control.js"></script>
+
+<dom-module id="cloud-app">
+  <template>
+    <ree-app
+      id="editor"
+      playing
+      scene="{{scene}}">
+    </ree-app>
+  </template>
+</dom-module>
+<script>
+(function () {
+
+  var names = [
+    '_bldg0',
+    '_carving',
+    '_clothes0',
+    '_clothes1',
+    '_flag',
+    '_grass',
+    '_house',
+    '_lion',
+    '_paprika',
+    '_pineapple1',
+    '_sculpture',
+    '_tank',
+    '_trash0',
+    '_trash1',
+    '_window'
+    // '__combined_scene',
+    // '_pineapple0',
+    // '_pineapple2',
+  ];
+
+  var particles = createParticles( 1024 );
+  particles.scale.set(1, 1, 1);
+  particles.rotation.set(0, Math.PI/2, 0);
+
+  var currentTexture = 5;
+
+  Polymer({
+    is: 'cloud-app',
+    properties: {
+      scene: {},
+      camera: {}
+    },
+    ready: function () {
+      particles.material.uniforms.tPositions.value =
+        loadDataTexture('data/' + names[currentTexture] + '.position.bin', 1024, 1024);
+      particles.material.uniforms.tColors.value =
+        loadDataTexture('data/' + names[currentTexture] + '.color.bin', 1024, 1024);
+
+      this.scene = this.$.editor.scene;
+      this.scene.add(particles);
+
+      this.camera = this.$.editor.cameras.persp;
+      this.camera._target = new THREE.Vector3();
+      this.camera.fov = 70;
+      this.camera.position.set(-7, 4, 0);
+
+      var control = new REE.LockedOrbitControl();
+      control.registerViewport(this.$.editor.$.viewport, this.camera);
+
+      this.addEventListener('mouseup', function (event) {
+        if (event.button === 0) {
+          currentTexture = (currentTexture + names.length + 1) % names.length;
+          particles.material.uniforms.tPositions.value =
+            loadDataTexture('data/' + names[currentTexture] + '.position.bin', 1024, 1024);
+          particles.material.uniforms.tColors.value =
+            loadDataTexture('data/' + names[currentTexture] + '.color.bin', 1024, 1024);
+        } else if (event.button === 2) {
+          currentTexture = (currentTexture + names.length - 1) % names.length;
+          particles.material.uniforms.tPositions.value =
+            loadDataTexture('data/' + names[currentTexture] + '.position.bin', 1024, 1024);
+          particles.material.uniforms.tColors.value =
+            loadDataTexture('data/' + names[currentTexture] + '.color.bin', 1024, 1024);
+        }
+      }.bind(this));
+    },
+    attached:function () {
+      this._animationLoop = function() {
+        requestAnimationFrame(this._animationLoop);
+
+        var distance = 3;
+
+        var time = Date.now();
+        this.camera._target.x = Math.sin(time / 35000) * 0.1;
+        this.camera._target.z = Math.cos(time / 20000) * 0.1;
+        this.camera._target.y = Math.cos(time / 30000) * 0.125 + 4;
+        this.camera.lookAt(this.camera._target);
+
+      }.bind(this);
+      this._animationLoop();
+    },
+    detached: function () {
+      this._animationLoop = function () {};
+    }
+  });
+}());
+</script>
