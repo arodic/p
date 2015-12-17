@@ -6,13 +6,13 @@
   <!--
   Copyright 2012 All Rights Reserved
   Aleksandar Rodic
-  @arodic
+  @akirodic
   aleksandar.xyz@gmail.com
   http://aleksandarrodic.com
   -->
   <title>Daily Routines</title>
-  <script type="text/javascript" src="js/lib/three.min.js"></script> 
-  <script type="text/javascript" src="js/lib/tween.min.js"></script> 
+  <script type="text/javascript" src="js/lib/three.min.js"></script>
+  <script type="text/javascript" src="js/lib/tween.min.js"></script>
   <script type="text/javascript" src="js/lib/dat.gui.min.js"></script>
   <script type="text/javascript" src="js/lib/jquery.min.js"></script>
   <script type="text/javascript" src="js/lib/bootstrap.min.js"></script>
@@ -114,7 +114,7 @@
 </script>
 
   <div id="header" >
-    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://aleksandarrodic.com/p/daily-routines/" data-text="Check out this GPS data visualization in your browser!" data-via="xyz_ak" data-hashtags="webgl">Tweet</a>
+    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://aleksandarrodic.com/p/daily-routines/" data-text="Check out this GPS data visualization in your browser!" data-via="akirodic" data-hashtags="webgl">Tweet</a>
     <div class="fb-like" data-href="http://aleksandarrodic.com/p/daily-routines/" data-send="true" data-layout="button_count" data-width="250" data-show-faces="true" data-font="arial"></div>
     <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="300" data-href="http://aleksandarrodic.com/p/daily-routines/"></div>
   </div>
@@ -132,13 +132,13 @@
     <div class="modal-body" id="intro" >
       <p>
         <img src="./images/sf.png" style="width: 190px; height:auto; float:left; margin-right: 15px;" />
-        This is a data visualization application that projects large amounts of high resolution GPS data on an interactive 4D globe. The data set visualized here is a collection of 1099 personal tracking files with one data point recorded every 2 seconds over the course of 3+ years. My goal was to explore how my movement patterns change over time and in different environments. 
+        This is a data visualization application that projects large amounts of high resolution GPS data on an interactive 4D globe. The data set visualized here is a collection of 1099 personal tracking files with one data point recorded every 2 seconds over the course of 3+ years. My goal was to explore how my movement patterns change over time and in different environments.
       </p><br />
       <p>
         Keep in mind that this application uses a lot of memory to store and visualize the data and it requires a powerful GPU to render it in real time. In other words, it is designed for high-end machines and remember to close this tab when you are done. If you are interested in technical details, you can read about it in my <a href="http://aleksandarrodic.com/#blog" target="_blank">blog</a>.
       </p>
-      
-    <a href="https://twitter.com/xyz_ak" class="twitter-follow-button" data-show-count="false">Follow @xyz_ak</a>
+
+    <a href="https://twitter.com/akirodic" class="twitter-follow-button" data-show-count="false">Follow @akirodic</a>
 
     </div>
 
@@ -147,20 +147,14 @@
     </div>
 
   </div>
-  
-  <script type="text/javascript">
 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-68216254-1']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-
+  <script>
+  	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  	ga('create', 'UA-68216254-1', 'auto');
+  	ga('send', 'pageview');
   </script>
-  
 </body>
 </html>
