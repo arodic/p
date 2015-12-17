@@ -33,22 +33,15 @@
     body {
       margin: 0;
       background-color: #fff;
-      overflow: hidden;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      background-image: url("images/background.png");
+      background-image: url("images/sf.png");
       background-size: cover;
+      overflow: hidden;
     }
     #modal {
-      -webkit-user-select: auto;
-      -khtml-user-select: auto;
-      -moz-user-select: auto;
-      -ms-user-select: auto;
-      user-select: auto;
+      width: 300px;
+      left: 0;
+      top: 6px;
+      margin-left: 6px;
     }
     #header {
       position: absolute;
@@ -91,35 +84,6 @@
 </head>
 <body oncontextmenu="return false;">
 
-
-<script>
-  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-</script>
-<div id="fb-root"></div>
-<script>
-  (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-</script>
-<script type="text/javascript">
-  (function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-  })();
-</script>
-
-  <div id="header" >
-    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://aleksandarrodic.com/p/daily-routines/" data-text="Check out this GPS data visualization in your browser!" data-via="akirodic" data-hashtags="webgl">Tweet</a>
-    <div class="fb-like" data-href="http://aleksandarrodic.com/p/daily-routines/" data-send="true" data-layout="button_count" data-width="250" data-show-faces="true" data-font="arial"></div>
-    <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="300" data-href="http://aleksandarrodic.com/p/daily-routines/"></div>
-  </div>
-
-
   <div class="modal" id="modal">
 
     <div class="modal-header">
@@ -131,7 +95,9 @@
     </div>
     <div class="modal-body" id="intro" >
       <p>
-        <img src="./images/sf.png" style="width: 190px; height:auto; float:left; margin-right: 15px;" />
+        This application will download > 300MB of data. DO NOT use with mobile phone.
+      </p>
+      <p>
           This is an ongoing and unfinished project that I wish to give more attention in the future.
           It is essentially a GPS data visualization application that takes advantage of GPU and shaders to provide extremely fast and interactive filtering of massive GPS datasets.
       </p><br />
