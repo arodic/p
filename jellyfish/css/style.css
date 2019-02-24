@@ -11,7 +11,7 @@ html {
   font: 16px 'Helvetica Neue', Helvetica, Arial, sans-serif;
   letter-spacing: 0.05em;
   font-weight: 300;
-  font-size: 16px;
+  font-size: 18px;
   height: 100%;
 }
 
@@ -49,61 +49,47 @@ a {
   border-bottom:1px solid #fff;
 }
 #console {
+  display: inline-block;
   position:absolute;
-  min-width:265px;
-  overflow-y:auto;
-  overflow-x:hidden;
-  height:100%;
-  z-index:5;
-}
-#info {
-  position:absolute;
-  top:40%;
-  left:50%;
-  margin:auto;
-  margin-left:-175px;
-  width:350px;
-  padding:10px;
-  border:1px solid #fff;
+  overflow-y: auto;
+  overflow-x: hidden;
   z-index:5;
   background:#333;
-}
-
-.console-field {
-  background:#333;
-  float:left;
-  clear:left;
   min-width:235px;
   border:1px solid #fff;
-  -moz-border-radius: 5px;
   border-radius: 5px;
   padding:0 10px 10px 20px;
   margin:12px;
 }
-.console-field > * {
+
+#console {
+}
+#console > * {
   margin: 5px;
+  padding: 5px;
 }
 
-.console-field input {
+#console input {
+  font-size: inherit;
   margin:1px 0 0 0;
   background:#000;
+  display: inline-block;
 }
-.console-field b {
+#console b {
   display:block;
   color:#fff;
   text-shadow: 0 0 3px #26F;
   margin: 10px 4px 5px 0;
 }
-.console-field span.input-section {
+#console span.input-section {
   display:inline-block;
   width: 110px;
 }
 .textboxDebug {
   padding:0;
-  width:32px;
+  width:64px;
   color:#fff;
   border:0px;
-  height:12px;
   margin:0 0 -5px 0;
   z-index:3;
 }
