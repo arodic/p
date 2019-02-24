@@ -11,7 +11,7 @@ html {
   font: 16px 'Helvetica Neue', Helvetica, Arial, sans-serif;
   letter-spacing: 0.05em;
   font-weight: 300;
-  font-size: 14px;
+  font-size: 12px;
   height: 100%;
 }
 
@@ -65,31 +65,28 @@ a {
 #console {
 }
 #console > * {
-  margin: 5px;
-  padding: 5px;
+  margin: 2px;
+  padding: 2px;
 }
 
 #console input {
   font-size: inherit;
-  margin:1px 0 0 0;
   background:#000;
   display: inline-block;
 }
-#console b {
+#console p {
   display:block;
   color:#fff;
   text-shadow: 0 0 3px #26F;
-  margin: 10px 4px 5px 0;
+  margin: 10px;
 }
 #console span.input-section {
   display:inline-block;
-  width: 110px;
+  width: 80px;
 }
 .textboxDebug {
   padding:0;
   width:64px;
   color:#fff;
   border:0px;
-  margin:0 0 -5px 0;
-  z-index:3;
 }
