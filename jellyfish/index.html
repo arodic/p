@@ -71,9 +71,9 @@ void main(void) {
 
   //skinning
   pos = vec3(uJoint0 * vec4(pos, 1.0))*aSkinWeight.x +
-				vec3(uJoint1 * vec4(pos, 1.0))*aSkinWeight.y +
-				vec3(uJoint2 * vec4(pos, 1.0))*aSkinWeight.z +
-				vec3(uJoint3 * vec4(pos, 1.0))*aSkinWeight.w;
+        vec3(uJoint1 * vec4(pos, 1.0))*aSkinWeight.y +
+        vec3(uJoint2 * vec4(pos, 1.0))*aSkinWeight.z +
+        vec3(uJoint3 * vec4(pos, 1.0))*aSkinWeight.w;
   vec3 nrm = vec3(uJoint0InvTranspose * vec4(aVertexNormal, 1.0));
 
   //matrices
@@ -98,7 +98,7 @@ void main(void) {
   float fresnelProduct = pow(1.0-max(abs(dot(VertexNormal, -WorldEyeVec)), 0.0), 2.0);
   vFresnel = fresnelColor * vec3(fresnelProduct);
 
-	//texture coords
+  //texture coords
   vTextureCoord = aTextureCoord;
 
   gl_Position = WorldViewProj;

@@ -43,7 +43,7 @@ function drawRays(pass){
   gl.depthMask(true);
   gl.enable(gl.DEPTH_TEST);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  mWorld = M4x4.clone(mTemp);	
+  mWorld = M4x4.clone(mTemp);  
 }
 
 function rayParticle(tx,ty,tz,scl,id){

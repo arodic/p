@@ -17,11 +17,11 @@ var model = {
     
     "scale" : 1.000000,
 
-    "materials": [	{
-	"DbgColor" : 15658734,
-	"DbgIndex" : 0,
-	"DbgName" : "default"
-	}],
+    "materials": [  {
+  "DbgColor" : 15658734,
+  "DbgIndex" : 0,
+  "DbgName" : "default"
+  }],
 
     "vertices": [],
     

@@ -125,8 +125,8 @@ function setDebugParam(){
 
 function readDebugParam(){
     zoaParam.shaderDebug = parseFloat($('input:radio[name=shaderDebug]:checked').val());
-	
-	localParam.camera.near = parseFloat($("#near").val());
+  
+  localParam.camera.near = parseFloat($("#near").val());
     localParam.camera.far = parseFloat($("#far").val());
     localParam.camera.fov = parseFloat($("#fov").val());
     
@@ -142,8 +142,8 @@ function readDebugParam(){
     zoaParam.lightRadius = parseFloat($("#lightRadius").val());
     zoaParam.lightSpecPower = parseFloat($("#lightSpecPower").val());
     zoaParam.fresnelPower = parseFloat($("#fresnelPower").val());
-	zoaParam.lightTime = parseFloat($("#lightTime").val());
-	zoaParam.lightBlend = [parseFloat($("#lightBlendX").val()), parseFloat($("#lightBlendY").val()), 0];
+  zoaParam.lightTime = parseFloat($("#lightTime").val());
+  zoaParam.lightBlend = [parseFloat($("#lightBlendX").val()), parseFloat($("#lightBlendY").val()), 0];
     
     zoaParam.pCount = parseFloat($("#pCount").val());
     zoaParam.pScale = parseFloat($("#pScale").val());

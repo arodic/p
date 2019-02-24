@@ -22,13 +22,13 @@ function tick(){
 function animate(){
     requestAnimFrame( animate );
     tick();
-	drawScene();
+  drawScene();
 }
 
 window.requestAnimFrame = (function(){
-	return  window.requestAnimationFrame || 
-	window.webkitRequestAnimationFrame   || 
-	window.mozRequestAnimationFrame      || 
-	window.oRequestAnimationFrame        || 
-	window.msRequestAnimationFrame
+  return  window.requestAnimationFrame || 
+  window.webkitRequestAnimationFrame   || 
+  window.mozRequestAnimationFrame      || 
+  window.oRequestAnimationFrame        || 
+  window.msRequestAnimationFrame
 })();

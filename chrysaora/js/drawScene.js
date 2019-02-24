@@ -20,7 +20,7 @@ function drawScene() {
     mView = M4x4.rotate(mouseXY[1]/500,V3.$(1,0,0),mView);
     mView = M4x4.rotate(mouseXY[0]/500,V3.$(0,1,0),mView);
 
-	localParam.camera.eye = V3.$(-mViewInv[12],-mViewInv[13],-mViewInv[14]);
+  localParam.camera.eye = V3.$(-mViewInv[12],-mViewInv[13],-mViewInv[14]);
 
     readDebugParam();
     simulate();

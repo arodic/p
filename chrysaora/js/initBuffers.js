@@ -92,35 +92,35 @@ function generate3DGrid(name) {
    gUVs = [];
    for (i=-10;i<=10;i++){
      for (j=-10;j<=10;j++){
-	   for (k=-10;k<=10;k = k + 20){
+     for (k=-10;k<=10;k = k + 20){
          gPositions.push(i); gPositions.push(j); gPositions.push(k);
          gNormals.push(0); gNormals.push(0); gNormals.push(0);
          gColor.push(0.6); gColor.push(0.6); gColor.push(0.6);
          gUVs.push(0); gUVs.push(0); gUVs.push(0);
-	   }
+     }
      }  
    }
    for (i=-10;i<=10;i++){
      for (j=-10;j<=10;j++){
-	   for (k=-10;k<=10;k = k + 20){
+     for (k=-10;k<=10;k = k + 20){
          gPositions.push(i); gPositions.push(k); gPositions.push(j);
          gNormals.push(0); gNormals.push(0); gNormals.push(0);
          gColor.push(0.6); gColor.push(0.6); gColor.push(0.6);
          gUVs.push(0); gUVs.push(0); gUVs.push(0);
-	   }
+     }
      }  
    }
    for (i=-10;i<=10;i++){
      for (j=-10;j<=10;j++){
-	   for (k=-10;k<=10;k = k + 20){
+     for (k=-10;k<=10;k = k + 20){
          gPositions.push(k); gPositions.push(j); gPositions.push(i);
          gNormals.push(0); gNormals.push(0); gNormals.push(0);
          gColor.push(0.6); gColor.push(0.6); gColor.push(0.6);
          gUVs.push(0); gUVs.push(0); gUVs.push(0);
-	   }
+     }
      }  
    }
-	
+  
   vertexPositionBuffer[name] = gl.createBuffer();
   vertexNormalBuffer[name] = gl.createBuffer();
   vertexColorBuffer[name] = gl.createBuffer();

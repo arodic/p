@@ -9,35 +9,35 @@ jellyfish.count = 0;
 jellyfish.order = [];
 
 function interpolateTargets(){
-	while(jellyfish.count != jellyfishTargets.count){
+  while(jellyfish.count != jellyfishTargets.count){
       if(jellyfish.count<jellyfishTargets.count){
         jellyfish[jellyfish.count] = new jellyfishInstance(
         jellyfishTargets[jellyfish.count].pos,
         jellyfishTargets[jellyfish.count].scl,
         jellyfishTargets[jellyfish.count].id,
-	    jellyfishTargets[jellyfish.count].time,
-	    jellyfishTargets[jellyfish.count].alive);
-		jellyfish.count += 1;
-		
+      jellyfishTargets[jellyfish.count].time,
+      jellyfishTargets[jellyfish.count].alive);
+    jellyfish.count += 1;
+    
       }
       else if(jellyfish.count>jellyfishTargets.count){
         jellyfish.count -= 1;
         delete jellyfish[jellyfish.count];
-      }	
-	  jellyfish.order = jellyfishTargets.order;
-	}
-	  
+      }  
+    jellyfish.order = jellyfishTargets.order;
+  }
+    
     for(var i=0; i < jellyfish.count; i++){
       jellyfish[i].pos[0] = jellyfishTargets[i].pos[0];
       jellyfish[i].pos[1] = jellyfishTargets[i].pos[1];
       jellyfish[i].pos[2] = jellyfishTargets[i].pos[2];
-	  if (jellyfishTargets[i].scl<jellyfish[i].scl) {
-		jellyfish[i].scl = jellyfishTargets[i].scl;
-	  }
-	  jellyfish[i].scl = jellyfishTargets[i].scl;
-	  jellyfish[i].id = jellyfishTargets[i].id;
-	  jellyfish[i].time = jellyfishTargets[i].time;
-	  jellyfish[i].alive = jellyfishTargets[i].alive;
+    if (jellyfishTargets[i].scl<jellyfish[i].scl) {
+    jellyfish[i].scl = jellyfishTargets[i].scl;
+    }
+    jellyfish[i].scl = jellyfishTargets[i].scl;
+    jellyfish[i].id = jellyfishTargets[i].id;
+    jellyfish[i].time = jellyfishTargets[i].time;
+    jellyfish[i].alive = jellyfishTargets[i].alive;
 
     jellyfish.order[i][0] = i;
     jellyfish.order[i][1] = jellyfish[i].pos;  
@@ -45,14 +45,14 @@ function interpolateTargets(){
 }
 
 function drawJellyfish(){
-	interpolateTargets();
+  interpolateTargets();
     setShader("jellyfish");
     bindTexture1('caustics'+localParam.cycle32);
-	setMatrixUniforms();
+  setMatrixUniforms();
     bindTexture0('jellyfishColor');
-	bindTexture2('jellyfishAlpha');
+  bindTexture2('jellyfishAlpha');
     bindTexture1('caustics'+localParam.cycle32);
-	jellyfish.order.sort(sort3D);
+  jellyfish.order.sort(sort3D);
     for (var i=0; i < jellyfish.count; i++) {
       var k = jellyfish.order[i][0];
       if (jellyfish[k]){
@@ -60,7 +60,7 @@ function drawJellyfish(){
         jellyfish[k].simulate();
         jellyfish[k].setLOD();
         jellyfish[k].drawShadow();
-		jellyfish[k].draw();
+    jellyfish[k].draw();
       }
     }
 }
@@ -92,12 +92,12 @@ jellyfishInstance.prototype.draw = function(){
   if (zoaParam.showJellyfish == 1){    
 
     setShader("jellyfish");
-	
-	this.propel = (Math.sin(this.time+Math.PI)+0.6)*0.2;
+  
+  this.propel = (Math.sin(this.time+Math.PI)+0.6)*0.2;
     setjTimeUniform(this.time);
-	
+  
     setJointUniforms();
-	bindTexture0('jellyfishColor');
+  bindTexture0('jellyfishColor');
     drawBuffer('jellyfish'+this.lod);
   }
 }
@@ -108,7 +108,7 @@ jellyfishInstance.prototype.drawShadow = function(){
     gl.depthMask(false);
     gl.disable(gl.DEPTH_TEST);
     gl.blendEquation(gl.FUNC_REVERSE_SUBTRACT);
-	
+  
     setShader("ray");
     bindTexture0('halfBlob');
     var lookAt = new M4x4.$();  
@@ -118,14 +118,14 @@ jellyfishInstance.prototype.drawShadow = function(){
     pMatrix = M4x4.makeTranslate3(0,0,0);
     M4x4.mul(M4x4.makeLookAt(V3.$(zoaParam.lightPos[0],zoaParam.lightPos[1],zoaParam.lightPos[2]),V3.$(0,0,0),localParam.camera.eye),pMatrix,pMatrix);
     M4x4.scale3(6,180,0,pMatrix,pMatrix);
-	  M4x4.scale1(this.scl,pMatrix,pMatrix);
+    M4x4.scale1(this.scl,pMatrix,pMatrix);
 
     pPosition = this.s[0].pos;
     setParticleUniforms();
-	  gl.uniform1f(currentProgram.rAlpha, zoaParam.rAlpha*5);
+    gl.uniform1f(currentProgram.rAlpha, zoaParam.rAlpha*5);
     drawBuffer('quad');
     gl.uniform1f(currentProgram.rAlpha, zoaParam.rAlpha);
-	
+  
     gl.blendEquation(gl.FUNC_ADD);  
     gl.depthMask(true);
     gl.enable(gl.DEPTH_TEST);
@@ -175,7 +175,7 @@ jellyfishInstance.prototype.simulate = function(){
   for (j=1;j<=3;j++){
     this.s[j].spring = 2.95 * this.scl;
     this.s[j].update(this.s[j-1].pos);
-	
+  
     if (this.alive == 1) this.s[j].gravity = -0.01;
     else this.s[j].gravity = -0.045;
   
@@ -241,9 +241,9 @@ Spring2D.prototype.update = function(target){
 
 Spring2D.prototype.repel = function(){
   for(var i=0; i < jellyfish.count; i++){
-	var dist = V3.sub(this.pos, jellyfish[i].pos);
+  var dist = V3.sub(this.pos, jellyfish[i].pos);
     if (V3.length(dist) < 32*1){
-	  var force = V3.scale(dist, 128*1/Math.pow(V3.length(dist),3));
+    var force = V3.scale(dist, 128*1/Math.pow(V3.length(dist),3));
       V3.add(this.pos, force, this.pos);
     };
   }

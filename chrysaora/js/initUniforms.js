@@ -73,7 +73,7 @@ function setDebugUniforms(){
     gl.uniform4f(currentProgram.fogTopCol, zoaParam.fogTopCol[0],zoaParam.fogTopCol[1],zoaParam.fogTopCol[2],zoaParam.fogTopCol[3]);
     gl.uniform4f(currentProgram.fogBottomCol, zoaParam.fogBottomCol[0],zoaParam.fogBottomCol[1],zoaParam.fogBottomCol[2],zoaParam.fogBottomCol[3]);
     gl.uniform1f(currentProgram.fogDist, zoaParam.fogDist);
-	gl.uniform4f(currentProgram.fresnelCol, zoaParam.fresnelCol[0],zoaParam.fresnelCol[1],zoaParam.fresnelCol[2],zoaParam.fresnelCol[3]);
+  gl.uniform4f(currentProgram.fresnelCol, zoaParam.fresnelCol[0],zoaParam.fresnelCol[1],zoaParam.fresnelCol[2],zoaParam.fresnelCol[3]);
     gl.uniform1f(currentProgram.lightRadius, zoaParam.lightRadius);
     gl.uniform1f(currentProgram.lightSpecPower, zoaParam.lightSpecPower);
     gl.uniform1f(currentProgram.fresnelPow, zoaParam.fresnelPower);

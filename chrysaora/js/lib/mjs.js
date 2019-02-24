@@ -1683,7 +1683,7 @@ M4x4.makeLookAt = function M4x4_makeLookAt (eye, center, up, r) {
     var y = V3.normalize(V3.direction(eye, center, V3._temp1), V3._temp1);
     var x = V3.normalize(V3.cross(up, y, V3._temp2), V3._temp2);
     var z = V3.normalize(V3.cross(y, x, V3._temp3), V3._temp3);
-				
+        
     var tm1 = M4x4._temp1;
     var tm2 = M4x4._temp2;
 
@@ -1705,21 +1705,21 @@ M4x4.makeLookAt = function M4x4_makeLookAt (eye, center, up, r) {
     tm1[15] = 1;
 
     tm2[0] = 1;
-		tm2[1] = 0;
-		tm2[2] = 0;
-		tm2[3] = 0;
+    tm2[1] = 0;
+    tm2[2] = 0;
+    tm2[3] = 0;
     tm2[4] = 0;
-		tm2[5] = 1;
-		tm2[6] = 0;
-		tm2[7] = 0;
+    tm2[5] = 1;
+    tm2[6] = 0;
+    tm2[7] = 0;
     tm2[8] = 0;
-		tm2[9] = 0;
-		tm2[10] = 1;
-		tm2[11] = 0;
-		tm2[12] = 0;//eye[0];
-		tm2[13] = 0;//eye[1];
-		tm2[14] = 0;//eye[2];
-		tm2[15] = 1;
+    tm2[9] = 0;
+    tm2[10] = 1;
+    tm2[11] = 0;
+    tm2[12] = 0;//eye[0];
+    tm2[13] = 0;//eye[1];
+    tm2[14] = 0;//eye[2];
+    tm2[15] = 1;
 
     if (r == undefined)
         r = new MJS_FLOAT_ARRAY_TYPE(16);

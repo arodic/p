@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="chrome=1">
 <style type="text/css">
-	* { margin: 0px; padding:0px; }
+  * { margin: 0px; padding:0px; }
 </style>
 </head><body style="background: #000;">
 <a href="https://twitter.com/share" class="twitter-share-button" data-via="akirodic">Tweet</a>
@@ -13,26 +13,26 @@
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 <canvas id="canvas"></canvas>
 <script type="text/javascript" >
-	var gl = (function () {
-		var d=document, w=window, c=d.getElementById('canvas'),
-		gl = c.getContext('experimental-webgl');
+  var gl = (function () {
+    var d=document, w=window, c=d.getElementById('canvas'),
+    gl = c.getContext('experimental-webgl');
 
-		function resize() {
-			c.width = w.innerWidth;
-			c.height = w.innerHeight;
-			gl.viewport(0, 0, c.width, c.height);
-		}; resize(); w.addEventListener('resize', resize, false);
+    function resize() {
+      c.width = w.innerWidth;
+      c.height = w.innerHeight;
+      gl.viewport(0, 0, c.width, c.height);
+    }; resize(); w.addEventListener('resize', resize, false);
 
-		return gl;
-	})();
+    return gl;
+  })();
 </script>
 <script type="text/javascript" src="mass.js"></script>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68216254-1"></script>
 <script>
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'UA-68216254-1');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-68216254-1');
 </script>
 </body></html>

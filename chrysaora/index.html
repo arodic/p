@@ -70,7 +70,7 @@ varying vec4 vFogCol;
 void main(void) {
   vec3 pos = aVertexPosition;
 
-	//matrices
+  //matrices
   vWorld =               uWorld * vec4(pos, 1.0);
   vWorldView =           uWorldView * vec4(pos, 1.0);
   vWorldViewProj =       uWorldViewProj * vec4(pos, 1.0);
@@ -86,7 +86,7 @@ void main(void) {
   vFogCol = uFogTopCol*height + uFogBottomCol*(1.0-height);
   vFogCol.a = min(max((uFar-uNear)*vDepth/uFogDist,0.0),1.0);
 
-	gl_Position = vWorldViewProj;
+  gl_Position = vWorldViewProj;
 
 }
 </script>
@@ -125,7 +125,7 @@ varying vec4 vFogCol;
 void main(void) {
   vec4 composit = vec4(vFogCol.rgb, 1.0);
 
-	vec4 finalColor = composit;
+  vec4 finalColor = composit;
 
   gl_FragColor = finalColor;
 }
@@ -209,13 +209,13 @@ void main(void) {
   float w2 = max(min(weight-1.0,-weight+3.0),0.0);
   float w3 = max(min(weight-2.0,1.0),0.0);
   pos = vec3(uJoint0 * vec4(pos, 1.0))*w0 +
-				vec3(uJoint1 * vec4(pos, 1.0))*w1 +
-				vec3(uJoint2 * vec4(pos, 1.0))*w2 +
-				vec3(uJoint3 * vec4(pos, 1.0))*w3;
+        vec3(uJoint1 * vec4(pos, 1.0))*w1 +
+        vec3(uJoint2 * vec4(pos, 1.0))*w2 +
+        vec3(uJoint3 * vec4(pos, 1.0))*w3;
   nrm = vec3(uJoint0InvTranspose * vec4(nrm, 1.0))*w0 +
-				vec3(uJoint1InvTranspose * vec4(nrm, 1.0))*w1 +
-				vec3(uJoint2InvTranspose * vec4(nrm, 1.0))*w2 +
-				vec3(uJoint3InvTranspose * vec4(nrm, 1.0))*w3;
+        vec3(uJoint1InvTranspose * vec4(nrm, 1.0))*w1 +
+        vec3(uJoint2InvTranspose * vec4(nrm, 1.0))*w2 +
+        vec3(uJoint3InvTranspose * vec4(nrm, 1.0))*w3;
 
   //matrices
   vWorld =               uWorld * vec4(pos, 1.0);
@@ -251,7 +251,7 @@ void main(void) {
   vFogCol = uFogTopCol*height + uFogBottomCol*(1.0-height);
   vFogCol.a = min(max((uFar-uNear)*vDepth/uFogDist,0.0),1.0);
 
-	//texture coords
+  //texture coords
   vTextureCoord = aTextureCoord;
 
   //ambient color
@@ -368,7 +368,7 @@ varying vec4 vFogCol;
 void main(void) {
   vec3 pos = aVertexPosition;
 
-	//matrices
+  //matrices
   vWorld =               uWorld * vec4(pos, 1.0);
   vWorldView =           uWorldView * vec4(pos, 1.0);
   vWorldViewProj =       uWorldViewProj * vec4(pos, 1.0);
@@ -385,9 +385,9 @@ void main(void) {
   vFogCol.a = min(max((uFar-uNear)*vDepth/uFogDist,0.0),1.0);
 
   //vertex color
-	vColor = aVertexColor;
+  vColor = aVertexColor;
 
-	gl_Position = vWorldViewProj;
+  gl_Position = vWorldViewProj;
 }
 </script>
 
@@ -426,10 +426,10 @@ varying vec4 vFogCol;
 void main(void) {
   vec4 composit = vec4(vColor, 1.0);
 
-	//mix with fog
-	composit.rgb = mix(composit.rgb, vFogCol.rgb, vFogCol.a);
+  //mix with fog
+  composit.rgb = mix(composit.rgb, vFogCol.rgb, vFogCol.a);
 
-	vec4 finalColor = composit;
+  vec4 finalColor = composit;
 
   gl_FragColor = finalColor;
 }
@@ -480,7 +480,7 @@ varying vec4 vFogCol;
 void main(void) {
   vec3 pos = aVertexPosition;
 
-	//matrices
+  //matrices
   vWorld =               uWorld * vec4(pos, 1.0);
   vWorldView =           uWorldView * vec4(pos, 1.0);
   vWorldViewProj =       uWorldViewProj * vec4(pos, 1.0);
@@ -496,10 +496,10 @@ void main(void) {
   vFogCol = uFogTopCol*height + uFogBottomCol*(1.0-height);
   vFogCol.a = min(max((uFar-uNear)*vDepth/uFogDist,0.0),1.0);
 
-	//vertex color
+  //vertex color
   vColor = aVertexColor;
 
-	gl_Position = vWorldViewProj;
+  gl_Position = vWorldViewProj;
 }
 </script>
 
@@ -538,10 +538,10 @@ varying vec4 vFogCol;
 void main(void) {
   vec4 composit = vec4(vColor.rgb,1.0);
 
-	//mix with fog
+  //mix with fog
   composit.rgb = mix(composit.rgb, vFogCol.rgb, vFogCol.a);
 
-	vec4 finalColor = composit;
+  vec4 finalColor = composit;
 
   gl_FragColor = finalColor;
 }
@@ -605,12 +605,12 @@ void main(void) {
         vec4( cos(rotationSpeed),  sin(rotationSpeed),  0.0,  0.0),
         vec4(-sin(rotationSpeed),  cos(rotationSpeed),  0.0,  0.0),
         vec4(0.0,   0.0,  1.0,  0.0),
-		    vec4(0.0,   0.0,  0.0,  1.0)
+        vec4(0.0,   0.0,  0.0,  1.0)
   );
 
   pos = vec3(uParticleMatrix * rotation * vec4(aVertexPosition, 1.0)) * uParticleScale + uParticlePosition;
 
-	//matrices
+  //matrices
   vWorld =               uWorld * vec4(pos, 1.0);
   vWorldView =           uWorldView * vec4(pos, 1.0);
   vWorldViewProj =       uWorldViewProj * vec4(pos, 1.0);
@@ -624,7 +624,7 @@ void main(void) {
   vWorldEyeVec = normalize(vWorld.xyz - uViewInv[3].xyz);
 
   //diffuse light
-	vec3 lightDir = normalize(uLightPos - vWorld.xyz);
+  vec3 lightDir = normalize(uLightPos - vWorld.xyz);
   float diffuseProduct = max(dot(normalize(vVertexNormal.xyz), lightDir), 0.0);
   float lightFalloff = pow(max(1.0-(distance(uLightPos, vWorld.xyz)/uLightRadius), 0.0),2.0);
   vDiffuse = uLightCol.rgb * vec3(diffuseProduct * lightFalloff * uLightCol.a);
@@ -640,7 +640,7 @@ void main(void) {
   vFogCol = uFogTopCol*height + uFogBottomCol*(1.0-height);
   vFogCol.a = min(max((uFar-uNear)*vDepth/uFogDist,0.0),1.0);
 
-	//texture coords
+  //texture coords
   vTextureCoord = aTextureCoord;
 
   //vertex color
@@ -649,7 +649,7 @@ void main(void) {
   //ambient color
   vAmbient = uAmbientCol.rgb * uAmbientCol.a;
 
-	gl_Position = vWorldViewProj;
+  gl_Position = vWorldViewProj;
 }
 </script>
 
@@ -695,15 +695,15 @@ varying float pFade;
 void main(void) {
   vec4 composit = vec4(1.0,1.0,1.0,1.0);
 
-	//color and transpatency
+  //color and transpatency
     vec3 caustics = texture2D(uSampler1, vec2((vWorld.x)/24.+uCurrentTime/20., (vWorld.z-vWorld.y)/48.+uCurrentTime/40.)).rgb;
     vec4 colorMap = texture2D(uSampler0, vec2((vTextureCoord.s+uPID)*.25, (vTextureCoord.t+floor(uPID*.25))*.25));
     float transparency = colorMap.r * caustics.r * pFade * uPAlpha;
 
-	//mix with fog additive
-	composit = vec4((vAmbient + vDiffuse + caustics)*colorMap.rgb, transparency*(1.0-vFogCol.a));
+  //mix with fog additive
+  composit = vec4((vAmbient + vDiffuse + caustics)*colorMap.rgb, transparency*(1.0-vFogCol.a));
 
-	vec4 finalColor = composit;
+  vec4 finalColor = composit;
 
   gl_FragColor = finalColor;
 }
@@ -763,7 +763,7 @@ void main(void) {
   //Vertex Animation
   vec3 pos = vec3(uParticleMatrix * vec4(aVertexPosition, 1.0)) + uParticlePosition;
 
-	//matrices
+  //matrices
   vWorld =               uWorld * vec4(pos, 1.0);
   vWorldView =           uWorldView * vec4(pos, 1.0);
   vWorldViewProj =       uWorldViewProj * vec4(pos, 1.0);
@@ -783,13 +783,13 @@ void main(void) {
   vFogCol = uFogTopCol*height + uFogBottomCol*(1.0-height);
   vFogCol.a = min(max((uFar-uNear)*vDepth/uFogDist,0.0),1.0);
 
-	//texture coords
+  //texture coords
   vTextureCoord = aTextureCoord;
 
   //vertex color
   vColor = aVertexColor;
 
-	gl_Position = vWorldViewProj;
+  gl_Position = vWorldViewProj;
 }
 </script>
 
@@ -835,14 +835,14 @@ varying float pFade;
 void main(void) {
   vec4 composit = vec4(1.0,1.0,1.0,1.0);
 
-	//color and transpatency
-	float colorMap = texture2D(uSampler0, vec2(vTextureCoord.s, vTextureCoord.t)).r;
+  //color and transpatency
+  float colorMap = texture2D(uSampler0, vec2(vTextureCoord.s, vTextureCoord.t)).r;
   float transparency = colorMap * pFade * uRAlpha *.05;
 
-	//mix with fog additive
-	composit = vec4(vec3(vFogCol.rgb)*2.0, transparency*(1.0-vFogCol.a));
+  //mix with fog additive
+  composit = vec4(vec3(vFogCol.rgb)*2.0, transparency*(1.0-vFogCol.a));
 
-	vec4 finalColor = composit;
+  vec4 finalColor = composit;
 
   gl_FragColor = finalColor;
 }

@@ -42,6 +42,6 @@ function webGLStart() {
   
   interact();
   animate();
-	
+  
   toggleConsole();
 }
