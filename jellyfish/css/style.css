@@ -66,8 +66,8 @@ a {
 #console {
 }
 #console > * {
-  margin: 2px;
-  padding: 2px;
+  margin: 5px;
+  padding: 5px;
 }
 
 #console input {
