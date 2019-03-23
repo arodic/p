@@ -125,17 +125,14 @@ void main(void) {
   gl_FragColor = vec4(((vDiffuse + caustics)*colorMap.rgb) + vFresnel, colorMap.a);
 }
 </script>
-
 <script type="text/javascript">
 $(document).ready(function(){
   webGLStart();
 });
 </script>
-
 </head>
 <body>
   <div id="console">
-    <p>jellyfish depug</b>
     <p>Frame rate: <span id="frameRate">NaN</span></p>
     <span class="input-section">count</span>
     <input type="text" class="textboxDebug" id="jCount" /><br />
@@ -148,7 +145,6 @@ $(document).ready(function(){
     <input type="text" class="textboxDebug" id="jSpeed" /><br />
   </div>
   <canvas id="webgl-canvas"></canvas>
-
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-68216254-1"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
