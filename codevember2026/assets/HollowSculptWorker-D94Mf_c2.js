@@ -4214,16 +4214,16 @@
 				const s = this.rimstoneCoord(t, e);
 				if (s < 2.2) {
 					const r = this.memoRim[3], n = (s - .92) * r + .022 * this.noise3(6 * t, 2.5, 6 * e) + .01 * this.noise3(15 * t, 4.5, 15 * e), a = .006 * this.noise3(3.2 * t, .5, 3.2 * e) * smoothstep$1(-.1, 0, n), h = i + function rimstoneProfile(t, e) {
-						if (t < 0) return .025 + .07200000000000001 * smoothstep$1(-.06 - .01, -.005, t) + lip(t, .035);
-						let s = .097 + lip(t, .035);
+						if (t < 0) return .025 + .088 * smoothstep$1(-.06 - .01, -.005, t) + lip(t, .035);
+						let s = .113 + lip(t, .035);
 						for (let r = 0; r < 2; r++) {
 							const i = r * e;
 							r > 0 && (s += lip(t - i, .02)), s -= .04 * smoothstep$1(i + .005, i + .005 + .06, t);
 						}
 						const i = t - 2 * e;
 						return s - 1.25 * (i + Math.sqrt(i * i + .0025));
-					}(n, d.clamp(.12 * r, .1, .22)) + a;
-					o = s < .92 ? h : d.lerp(o, Math.max(o, h), 1 - smoothstep$1(1.95, 2.15, s));
+					}(n, d.clamp(.12 * r, .1, .22)) + a, l = Math.min(s - .92, 0) * Math.sqrt(this.rimRx * this.rimRz) * Math.max(.35, this.params.rimstoneScale), c = Math.max(h, o + 2.5 * l);
+					o = s < .92 ? c : d.lerp(o, c, 1 - smoothstep$1(1.95, 2.15, s));
 				}
 			}
 			if (s) {
@@ -4564,17 +4564,18 @@
 		lastRim = 0;
 		own = /* @__PURE__ */ new Float32Array(4);
 		featureCell = .05;
-		constructor(t, e) {
-			this.field = t, this.bodies = e, this.reach = new Float32Array(e.map((t) => Math.max(1.5, 2) * t.blend)), this.nx = Math.ceil((he.x - ae.x) / 1), this.ny = Math.ceil((he.y - ae.y) / 1), this.nz = Math.ceil((he.z - ae.z) / 1);
-			const s = Array.from({ length: this.nx * this.ny * this.nz }, () => []);
+		coarsen;
+		constructor(t, e, s = 1) {
+			this.field = t, this.bodies = e, this.coarsen = s, this.reach = new Float32Array(e.map((t) => Math.max(1.5, 2) * t.blend)), this.nx = Math.ceil((he.x - ae.x) / 1), this.ny = Math.ceil((he.y - ae.y) / 1), this.nz = Math.ceil((he.z - ae.z) / 1);
+			const i = Array.from({ length: this.nx * this.ny * this.nz }, () => []);
 			e.forEach((t, e) => {
-				const i = this.reach[e], r = this.cellIndex(t.min.x - i, 0, this.nx), n = this.cellIndex(t.min.y - i, 1, this.ny), a = this.cellIndex(t.min.z - i, 2, this.nz), h = this.cellIndex(t.max.x + i, 0, this.nx), o = this.cellIndex(t.max.y + i, 1, this.ny), l = this.cellIndex(t.max.z + i, 2, this.nz);
-				for (let c = a; c <= l; c++) for (let t = n; t <= o; t++) for (let i = r; i <= h; i++) s[i + this.nx * (t + this.ny * c)].push(e);
-			}), this.cells = s.map((t) => new Int32Array(t)), this.all = new Int32Array(e.map((t, e) => e));
-			const i = t.params.waterLevel;
+				const s = this.reach[e], r = this.cellIndex(t.min.x - s, 0, this.nx), n = this.cellIndex(t.min.y - s, 1, this.ny), a = this.cellIndex(t.min.z - s, 2, this.nz), h = this.cellIndex(t.max.x + s, 0, this.nx), o = this.cellIndex(t.max.y + s, 1, this.ny), l = this.cellIndex(t.max.z + s, 2, this.nz);
+				for (let c = a; c <= l; c++) for (let t = n; t <= o; t++) for (let s = r; s <= h; s++) i[s + this.nx * (t + this.ny * c)].push(e);
+			}), this.cells = i.map((t) => new Int32Array(t)), this.all = new Int32Array(e.map((t, e) => e));
+			const r = t.params.waterLevel;
 			this.rimRadius = Math.max(.3, t.rimstoneReach / 1.6 * .5);
-			const r = 1.15 * t.rimstoneReach + .5;
-			this.rimMin.set(t.rimstoneCenter.x - r, i - .4, t.rimstoneCenter.z - r), this.rimMax.set(t.rimstoneCenter.x + r, i + .55, t.rimstoneCenter.z + r), this.cascadeMin = t.cascadeEnd - 1.5, this.cascadeMax = t.cascadeStart + .5;
+			const n = 1.15 * t.rimstoneReach + .5;
+			this.rimMin.set(t.rimstoneCenter.x - n, r - .4, t.rimstoneCenter.z - n), this.rimMax.set(t.rimstoneCenter.x + n, r + .55, t.rimstoneCenter.z + n), this.cascadeMin = t.cascadeEnd - 1.5, this.cascadeMax = t.cascadeStart + .5;
 		}
 		cellIndex(t, e, s) {
 			return d.clamp(Math.floor((t - ae.getComponent(e)) / 1), 0, s - 1);
@@ -4732,7 +4733,7 @@
 				const x = "drapery" === h.kind && this.lastRim < .06 + c;
 				a = Math.min(a, x ? me : "stalactite" === h.kind ? y : h.feature);
 			}
-			return this.featureCell = a, n;
+			return this.featureCell = a, n * this.coarsen;
 		}
 		visit(t, e, s, i, r, n) {
 			if (t >= he.x || e >= he.y || s >= he.z) return null;
@@ -4760,7 +4761,7 @@
 			};
 			const g = u[1] - u[0] + u[3] - u[2] + u[5] - u[4] + u[7] - u[6], b = u[2] - u[0] + u[3] - u[1] + u[6] - u[4] + u[7] - u[5], M = u[4] - u[0] + u[5] - u[1] + u[6] - u[2] + u[7] - u[3], w = Math.sqrt(g * g + b * b + M * M) / (4 * i);
 			return {
-				split: Math.abs(p / 8 - o) / Math.max(w, .001) > .12 * i,
+				split: Math.abs(p / 8 - o) / Math.max(w, .001) > .12 * this.coarsen * i,
 				context: c
 			};
 		}
@@ -4926,7 +4927,7 @@
 	let ge = null, be = -1;
 	self.onmessage = (t) => {
 		const e = t.data;
-		if ("init" === e.kind) return ge = new xe(new ue(e.params), e.bodies.map(reviveBody)), void (be = e.job);
+		if ("init" === e.kind) return ge = new xe(new ue(e.params), e.bodies.map(reviveBody), e.coarsen), void (be = e.job);
 		if (!ge || e.job !== be) return;
 		const s = ge.sculptSlab(e.slab), { contour: i } = s, r = {
 			job: be,
