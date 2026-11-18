@@ -1,11 +1,11 @@
 import * as THREE from 'three/webgpu';
 
-// Mod: "Blue Hell". A moment after you start driving, the taxi clips through the street and falls under the map while
-// its physics keep running: it carries its momentum, tumbles, and keeps falling with the whole city hanging overhead,
-// seen from below (post-processing.js draws the glowing street seam and the void). Deep enough down, the game "rescues"
+// Mod: "Blue Hell". After two seconds of driving, cycling or walking, the player clips through the street and falls
+// under the map while its physics keep running: it carries its momentum, tumbles, and keeps falling with the whole
+// city hanging overhead, seen from below (post-processing.js draws the glowing street seam and the void). Deep enough down, the game "rescues"
 // you back onto the street... and it happens again. G drops you through the street right away.
 
-const ARM_DELAY = 1.2; // seconds on the street before it gives way
+const ARM_DELAY = 2.0; // seconds of player input (moving or turning, in total) before the street gives way
 const CLIP_TIME = 0.32; // the car jitters and sinks into the asphalt
 const GRAVITY = 9.81;
 const DRAG = 0.016; // quadratic air drag (1/m): a terminal speed of about 25 m/s (55 mph), so the view lingers
@@ -126,6 +126,15 @@ function stripGroundUndersides(roots, maxY = 0.75) {
   console.log(`[mod] under-the-map: dropped ${removed} ground-level undersides from ${geometries} geometries in ${Math.round(performance.now() - started)}ms`);
 }
 
+// What can fall through the street, and the height of the body's centre it tumbles about
+const FALLERS = { car: { lift: 0.72 }, cyclist: { lift: 0.55 }, person: { lift: 0.95 } };
+const PERSON_AIR = 1.2; // the pedestrian is posed this high above a ground that isn't there
+const _m = new THREE.Matrix4();
+const _r = new THREE.Matrix4();
+const _t = new THREE.Matrix4();
+const _q = new THREE.Quaternion();
+const _v = new THREE.Vector3();
+
 class FallThroughGlitch {
   constructor({ scene, controllerManager, cameraSystem, colorGrade }) {
     this.controllers = controllerManager;
@@ -137,6 +146,7 @@ class FallThroughGlitch {
     this.ready = false; // set once the loading screen is gone
 
     this.phase = 'armed'; // 'armed' -> 'clipping' -> 'falling' -> (respawn) 'armed'
+    this.mode = null; // which player is falling: 'car' | 'cyclist' | 'person'
     this.timer = 0;
     this.velocity = new THREE.Vector3();
     this.spin = new THREE.Vector3(); // tumble rates: pitch, yaw, roll (rad/s)
@@ -147,15 +157,21 @@ class FallThroughGlitch {
     this.pulse = 0;
     this.time = 0;
 
-    const car = this.controllers.entities.car;
-    car.mesh.rotation.order = 'YXZ';
-    // The contact shadow would hang under a car with no ground beneath it
-    this.carShadow = null;
-    car.mesh.traverse((o) => {
-      if (o.isMesh && o.renderOrder === 998) this.carShadow = o;
-    });
+    // Contact shadows would hang under a body with no ground beneath it
+    this.shadows = {};
+    for (const mode of Object.keys(FALLERS)) {
+      const entity = controllerManager.entities[mode];
+      entity.mesh.rotation.order = 'YXZ';
+      this.shadows[mode] = [];
+      entity.mesh.traverse((o) => {
+        if (o.isMesh && o.renderOrder === 998) this.shadows[mode].push(o);
+      });
+    }
 
-    // Teleporting (presets, the map, the rescue below) lands the car back on the street, at rest
+    // Tumble the bodies once the controllers have moved them, before the riders and pedestrians are posed onto them
+    controllerManager.beforePose = () => this.poseFalling();
+
+    // Teleporting (presets, the map, the rescue below) lands the player back on the street, at rest
     const teleport = controllerManager.teleportActiveTo.bind(controllerManager);
     controllerManager.teleportActiveTo = (...args) => {
       if (this.falling) this.respawn();
@@ -164,8 +180,7 @@ class FallThroughGlitch {
 
     window.addEventListener('keydown', (e) => {
       if (e.code !== 'KeyG' || e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
-      if (this.controllers.activeMode !== 'car') return;
-      if (this.phase === 'armed') this.startClip();
+      if (this.phase === 'armed' && FALLERS[this.controllers.activeMode]) this.startClip();
     });
   }
 
@@ -173,35 +188,51 @@ class FallThroughGlitch {
     return this.phase === 'clipping' || this.phase === 'falling';
   }
 
+  get entity() {
+    return this.mode ? this.controllers.entities[this.mode] : null;
+  }
+
   startClip() {
-    const car = this.controllers.entities.car;
+    const mode = this.controllers.activeMode;
+    const ent = this.controllers.entities[mode];
+    this.mode = mode;
     this.phase = 'clipping';
     this.timer = 0;
-    this.fallFrom = { x: car.position.x, z: car.position.z, heading: car.heading };
+    this.fallFrom = { x: ent.position.x, z: ent.position.z, heading: ent.heading };
     // Momentum carries on: heading speed plus any sideways slide
-    const sin = Math.sin(car.heading), cos = Math.cos(car.heading);
-    this.velocity.set(sin * car.speed + car.vx, 0, cos * car.speed + car.vz);
-    const forward = car.speed;
+    const sin = Math.sin(ent.heading), cos = Math.cos(ent.heading);
+    this.velocity.set(sin * ent.speed + (ent.vx || 0), 0, cos * ent.speed + (ent.vz || 0));
+    const forward = ent.speed;
     this.spin.set(
       0.25 + Math.min(0.6, Math.abs(forward) * 0.025) * Math.sign(forward || 1) + Math.random() * 0.15,
       (Math.random() - 0.5) * 0.5,
       (Math.random() - 0.5) * 0.9
     );
-    this.tumble.set(car.chassisPivot.rotation.x, 0, car.chassisPivot.rotation.z);
-    this.wheelSpin = car.wheelSpin || 0;
-    car.fallThrough = true;
-    car.vx = car.vz = car.angularVel = 0;
-    if (this.carShadow) this.carShadow.visible = false;
+    this.tumble.set(ent.chassisPivot?.rotation.x || 0, 0, (ent.chassisPivot?.rotation.z || 0) + (ent.leanAngle || 0));
+    this.wheelSpin = ent.wheelSpin || 0;
+    // The controllers stop moving it; the pedestrian's rig is posed mid-air (controllers.js poseCharacters)
+    ent.fallThrough = { air: PERSON_AIR, airVel: -5.6 };
+    if (mode === 'car') ent.vx = ent.vz = ent.angularVel = 0;
+    if (mode === 'person') ent.jumping = false;
+    for (const shadow of this.shadows[mode]) shadow.visible = false;
   }
 
   respawn() {
-    const car = this.controllers.entities.car;
-    car.fallThrough = false;
+    const ent = this.entity;
+    if (ent) {
+      ent.fallThrough = null;
+      ent.mesh.rotation.set(0, ent.heading, 0);
+      for (const shadow of this.shadows[this.mode]) shadow.visible = true;
+      if (this.mode === 'person') {
+        for (const m of ent.crowd.meshes) {
+          m.matrix.identity();
+          m.updateMatrixWorld(true); // (matrixAutoUpdate is off on the crowd meshes)
+        }
+      }
+    }
     this.phase = 'armed';
     this.timer = 0;
     this.tumble.set(0, 0, 0);
-    car.mesh.rotation.set(0, car.heading, 0);
-    if (this.carShadow) this.carShadow.visible = true;
     this.cameraSystem.minHeight = 0.55;
     this.cameraSystem.followYRate = 8.5;
   }
@@ -209,14 +240,16 @@ class FallThroughGlitch {
   // Back on the street where you fell, at rest (unless you were teleported somewhere else meanwhile)
   rescue() {
     const { x, z, heading } = this.fallFrom;
+    const mode = this.mode;
+    const ent = this.entity;
     this.respawn();
-    if (this.controllers.activeMode === 'car') {
+    this.mode = null;
+    if (this.controllers.activeMode === mode) {
       this.controllers.teleportActiveTo(x, z, heading);
       this.cameraSystem.resetForTeleport();
-    } else {
-      const car = this.controllers.entities.car;
-      car.position.set(x, this.controllers.getGroundHeight(x, z, 'car'), z);
-      car.speed = 0;
+    } else if (ent) {
+      ent.position.set(x, this.controllers.getGroundHeight(x, z, mode), z);
+      ent.speed = 0;
     }
   }
 
@@ -224,10 +257,11 @@ class FallThroughGlitch {
   update(dt, elapsed) {
     this.time = elapsed;
     const controllers = this.controllers;
-    const car = controllers.entities.car;
 
     if (this.phase === 'armed') {
-      if (this.ready && controllers.activeMode === 'car') {
+      const { forward, backward, left, right } = controllers.keys;
+      const input = forward || backward || left || right; // keyboard, touch and gamepad all feed these
+      if (this.ready && FALLERS[controllers.activeMode] && input) {
         this.timer += dt;
         if (this.timer >= ARM_DELAY) this.startClip();
       }
@@ -235,24 +269,25 @@ class FallThroughGlitch {
       return;
     }
 
-    // Leaving the taxi mid-fall puts it back on the street
-    if (controllers.activeMode !== 'car') {
+    // Switching to another player mid-fall puts the falling one back on the street
+    if (controllers.activeMode !== this.mode) {
       this.rescue();
       return;
     }
 
+    const ent = this.entity;
     this.timer += dt;
     const keys = controllers.keys;
     const steer = (+keys.left || 0) - (+keys.right || 0);
     const throttle = (+keys.forward || 0) - (+keys.backward || 0);
 
     if (this.phase === 'clipping') {
-      // The collision resolves the wrong way: the car shudders, then sinks into the asphalt
+      // The collision resolves the wrong way: the body shudders, then sinks into the asphalt
       const t = this.timer / CLIP_TIME;
-      const ground = controllers.getGroundHeight(car.position.x, car.position.z, 'car');
-      car.position.x += this.velocity.x * dt;
-      car.position.z += this.velocity.z * dt;
-      car.position.y = ground - t * t * 0.9 + (Math.random() - 0.5) * 0.12 * (1 - t);
+      const ground = controllers.getGroundHeight(ent.position.x, ent.position.z, this.mode);
+      ent.position.x += this.velocity.x * dt;
+      ent.position.z += this.velocity.z * dt;
+      ent.position.y = ground - t * t * 0.9 + (Math.random() - 0.5) * 0.12 * (1 - t);
       this.tumble.x += (Math.random() - 0.5) * 0.08;
       this.tumble.z += (Math.random() - 0.5) * 0.1;
       this.pulse = Math.min(1, 0.4 + t);
@@ -267,8 +302,8 @@ class FallThroughGlitch {
       const speed = v.length();
       v.y -= GRAVITY * dt;
       v.multiplyScalar(1 / (1 + DRAG * speed * dt));
-      car.position.addScaledVector(v, dt);
-      // Tumbling builds up slowly; steering still yaws the car, the throttle still spins the wheels
+      ent.position.addScaledVector(v, dt);
+      // Tumbling builds up slowly; steering still yaws the body, the throttle still spins the wheels
       this.spin.x += (Math.random() - 0.5) * 0.4 * dt;
       this.spin.z += (Math.random() - 0.5) * 0.4 * dt;
       this.spin.y += steer * 1.6 * dt;
@@ -276,43 +311,64 @@ class FallThroughGlitch {
       this.tumble.y += this.spin.y * dt;
       this.tumble.z += this.spin.z * dt;
       this.pulse = Math.max(0, this.pulse - dt * 2.5);
-      const depth = -car.position.y;
+      const depth = -ent.position.y;
       if (depth > RESPAWN_DEPTH || this.timer > RESPAWN_TIME) {
         this.rescue();
         return;
       }
     }
 
-    this.wheelSpin = (this.wheelSpin + (Math.abs(car.speed) * 0.04 + throttle * 0.6) * dt * 20) % (Math.PI * 2);
-    car.speed = this.velocity.length() * Math.sign(car.speed || 1);
-    car.prevX = car.position.x;
-    car.prevZ = car.position.z;
+    const spinStep = (Math.abs(ent.speed) * 0.04 + throttle * 0.6) * dt * 20;
+    this.wheelSpin = (this.wheelSpin + spinStep) % (Math.PI * 2);
+    if (this.mode === 'cyclist' && throttle > 0) ent.pedalPhase += spinStep / 3.2;
+    ent.speed = this.velocity.length() * Math.sign(ent.speed || 1);
+    ent.prevX = ent.position.x;
+    ent.prevZ = ent.position.z;
   }
 
-  // Pose the car once the controllers have placed it (they set the mesh's position and heading)
-  poseCar() {
+  // Tumble the falling body about its centre; the controllers have just set its position and heading
+  poseFalling() {
     if (!this.falling) return;
-    const car = this.controllers.entities.car;
-    const m = car.mesh;
-    m.rotation.set(this.tumble.x, car.heading + this.tumble.y, this.tumble.z, 'YXZ');
+    const ent = this.entity;
+    const { lift } = FALLERS[this.mode];
+    if (this.mode === 'person') {
+      // The pedestrian is drawn in world space by its rig: turn the whole drawn body about its centre instead
+      const c = _v.set(ent.position.x, ent.position.y + lift, ent.position.z);
+      _q.setFromEuler(this.tumble);
+      // the tumble is relative to the walker's heading
+      const h = ent.heading;
+      _r.makeRotationY(h).multiply(_t.makeRotationFromQuaternion(_q)).multiply(_t.makeRotationY(-h));
+      _m.makeTranslation(c.x, c.y, c.z).multiply(_r).multiply(_t.makeTranslation(-c.x, -c.y, -c.z));
+      for (const m of ent.crowd.meshes) {
+        m.matrix.copy(_m);
+        m.updateMatrixWorld(true);
+      }
+      return;
+    }
+    const m = ent.mesh;
+    m.rotation.set(this.tumble.x, ent.heading + this.tumble.y, this.tumble.z, 'YXZ');
     // Tumble about the body's centre rather than the wheels' contact patch
-    const lift = 0.72;
-    const q = m.quaternion;
-    const up = new THREE.Vector3(0, lift, 0).applyQuaternion(q);
-    m.position.set(car.position.x, car.position.y + lift - up.y, car.position.z);
-    m.position.x -= up.x;
-    m.position.z -= up.z;
-    car.wheelSpin = this.wheelSpin;
-    for (const w of car.wheels) w.tire.rotation.x = this.wheelSpin + (w.isFront ? 0 : 0.55);
+    const up = _v.set(0, lift, 0).applyQuaternion(m.quaternion);
+    m.position.set(ent.position.x - up.x, ent.position.y + lift - up.y, ent.position.z - up.z);
+    if (this.mode === 'car') {
+      ent.wheelSpin = this.wheelSpin;
+      for (const w of ent.wheels) w.tire.rotation.x = this.wheelSpin + (w.isFront ? 0 : 0.55);
+    } else {
+      ent.frontWheel.rotation.x = ent.rearWheel.rotation.x = this.wheelSpin;
+      ent.crankPivot.rotation.x = ent.pedalPhase;
+      for (const pedal of ent.pedals) pedal.rotation.x = -ent.pedalPhase;
+      // the rider (posed onto the bike frame next) follows it
+      m.updateMatrixWorld(true);
+    }
   }
 
-  // After the camera system: let the follow cameras dive with the car, tilt toward the city overhead, and feed the
+  // After the camera system: let the follow cameras dive with the player, tilt toward the city overhead, and feed the
   // post-processing how far under the map the view is
   updateCamera(dt) {
     const cs = this.cameraSystem;
     const camera = cs.camera;
-    const car = this.controllers.entities.car;
-    const falling = this.falling && this.controllers.activeMode === 'car';
+    const ent = this.entity;
+    const falling = this.falling && this.controllers.activeMode === this.mode;
     cs.minHeight = falling ? -Infinity : 0.55;
     cs.followYRate = falling ? 26 : 8.5;
 
@@ -324,14 +380,14 @@ class FallThroughGlitch {
     if (this.water) this.water.visible = !falling;
 
     if (falling && cs.getActivePreset().category === 'follow') {
-      const carDepth = Math.max(0, -car.position.y);
-      // The chase camera drops toward the car's level unless the player is orbiting it
+      const bodyDepth = Math.max(0, -ent.position.y);
+      // The chase camera drops toward the player's level unless the player is orbiting it
       if (!cs.isDragging && cs.userOrbitTimer <= 0) cs.orbitPitchOffset += (-0.12 - cs.orbitPitchOffset) * (1 - Math.exp(-dt * 2));
       // Look a little above the horizon, keeping the glowing seam in frame, and further up at the receding city the
       // deeper the fall; the view sways with it
       const forward = camera.getWorldDirection(this._forward);
       const elevation = Math.asin(Math.max(-1, Math.min(1, forward.y)));
-      const want = 0.05 + 0.13 * smoothstep(15, 220, carDepth);
+      const want = 0.05 + 0.13 * smoothstep(15, 220, bodyDepth);
       camera.rotateX((want - elevation) * this.under);
       camera.rotateZ(Math.sin(this.time * 0.9) * 0.045 * this.under);
       if (this.phase === 'clipping') {

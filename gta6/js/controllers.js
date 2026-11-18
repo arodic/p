@@ -1031,15 +1031,21 @@ class ThirdPersonControllerManager {
       if (this.activeMode === 'person' || dx * dx + dz * dz <= maxDistSq) {
         p._charHidden = false;
         if (p.mesh) p.mesh.visible = true;
-        const groundY = this.getGroundHeight(p.position.x, p.position.z, 'person');
+        // Fallen through the street (fall-through-glitch.js): posed reaching mid-air over a ground that isn't there
+        const fall = p.fallThrough;
+        const groundY = fall ? p.position.y - fall.air : this.getGroundHeight(p.position.x, p.position.z, 'person');
         const air = p.position.y - groundY;
-        const jumpAir = p.jumping ? Math.max(0.006, air) : p.jumpPrep > 0 ? -(1 - p.jumpPrep / 0.085) : air > 0.3 ? air : 0;
+        let jumpAir = p.jumping ? Math.max(0.006, air) : p.jumpPrep > 0 ? -(1 - p.jumpPrep / 0.085) : air > 0.3 ? air : 0;
+        if (fall) {
+          jumpAir = fall.air;
+          p.rig.airVel = fall.airVel;
+        }
         if (p.shadow) {
           p.shadow.position.y = groundY - p.position.y + 0.02;
           const sScale = Math.max(0.45, 1 - Math.max(0, jumpAir) * 0.35);
           p.shadow.scale.set(sScale, sScale, 1);
         }
-        p.rig.update(dt, p.position.x, p.position.z, p.heading, personGround, this, jumpAir);
+        p.rig.update(dt, p.position.x, p.position.z, p.heading, fall ? () => groundY : personGround, this, jumpAir);
         p.crowd.begin();
         p.crowd.add(p.rig, 0);
         p.crowd.end();
@@ -1101,8 +1107,9 @@ class ThirdPersonControllerManager {
     heli.mainRotorPivot.rotation.y += dt * 24.0;
     heli.tailRotorPivot.rotation.x += dt * 32.0;
 
+    // Under the map (fall-through-glitch.js), the fall's own physics move the player
     if (this.activeMode === 'person') {
-      this.updatePerson(dt, elapsed);
+      if (!this.entities.person.fallThrough) this.updatePerson(dt, elapsed);
     } else {
       // Keep the sidewalk pedestrian walking naturally on the ground when not actively controlled
       const p = this.entities.person;
@@ -1122,10 +1129,9 @@ class ThirdPersonControllerManager {
     }
 
     if (this.activeMode === 'car') {
-      // Under the map (fall-through-glitch.js), the fall's own physics move the car
       if (!this.entities.car.fallThrough) this.updateCar(dt, elapsed);
     } else if (this.activeMode === 'cyclist') {
-      this.updateCyclist(dt, elapsed);
+      if (!this.entities.cyclist.fallThrough) this.updateCyclist(dt, elapsed);
     } else if (this.activeMode === 'helicopter') {
       this.updateHelicopter(dt, elapsed);
     }
@@ -1152,6 +1158,7 @@ class ThirdPersonControllerManager {
       bike.headLight.intensity = bikeActive ? 115 * beamScale : 0;
     }
 
+    if (this.beforePose) this.beforePose();
     this.poseCharacters(dt, focusPos);
   }
 

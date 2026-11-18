@@ -296,9 +296,9 @@ async function initApp() {
 
   // Keyboard guide for each mode: [keys, action]
   const controlHints = {
-    person: [[['W', 'S'], 'Walk / Run'], [['A', 'D'], 'Turn'], [['Space'], 'Jump'], [['Drag'], 'Orbit']],
+    person: [[['W', 'S'], 'Walk / Run'], [['A', 'D'], 'Turn'], [['Space'], 'Jump'], [['G'], 'Fall through'], [['Drag'], 'Orbit']],
     car: [[['W', 'S'], 'Drive / Reverse'], [['A', 'D'], 'Steer'], [['B'], 'Horn'], [['G'], 'Fall through'], [['Drag'], 'Orbit']],
-    cyclist: [[['W', 'S'], 'Pedal / Brake'], [['Space'], 'Brake'], [['A', 'D'], 'Lean & Turn'], [['Drag'], 'Orbit']],
+    cyclist: [[['W', 'S'], 'Pedal / Brake'], [['Space'], 'Brake'], [['A', 'D'], 'Lean & Turn'], [['G'], 'Fall through'], [['Drag'], 'Orbit']],
     helicopter: [[['W', 'S'], 'Pitch'], [['A', 'D'], 'Yaw'], [['Space', 'E'], 'Ascend'], [['Q', 'C'], 'Descend']]
   };
   // Top speeds in mph (controllers.js caps them at 8.2, 36, 19 & 52 m/s): full scale of the speed meter
@@ -709,7 +709,6 @@ async function initApp() {
     gamepadControls.update(dt);
     glitch.update(dt, elapsed);
     controllerManager.update(dt, elapsed, cameraSystem.initialized ? cameraSystem.currentPos : null);
-    glitch.poseCar();
     cameraSystem.update(dt, elapsed);
     glitch.updateCamera(dt);
     streetDetails.signalClock.value = elapsed;
@@ -789,7 +788,7 @@ async function initApp() {
       const mode = controllerManager.activeMode;
       const mph = Math.round(Math.abs(activeEnt.speed) * 2.237);
       // Under the map the altimeter reads below the street
-      const altFt = glitch.falling ? Math.round(activeEnt.position.y * 3.281) : Math.max(0, Math.round(activeEnt.position.y * 3.281));
+      const altFt = glitch.falling ? Math.round(activeEnt.position.y * 3.281) || 0 : Math.max(0, Math.round(activeEnt.position.y * 3.281));
 
       if (elFps) {
         elFps.textContent = String(currentFps);
